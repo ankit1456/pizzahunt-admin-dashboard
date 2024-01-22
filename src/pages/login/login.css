@@ -1,0 +1,21 @@
+.login__container {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.login__title {
+  width: 100%;
+  font-size: 16px;
+  justify-content: center;
+  margin-left: -10px;
+}
+
+.login__input-icon {
+  opacity: 0.6;
+  margin-right: 4px;
+}
+
+.login__forgot-link {
+  font-size: 13px;
+}
