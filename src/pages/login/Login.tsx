@@ -15,6 +15,7 @@ import "./login.css";
 import { useMutation } from "@tanstack/react-query";
 import { Credentials } from "../../types";
 import { login } from "../../http/api";
+import { useAuthState } from "../../store";
 
 const handleLogin = async function (credentials: Credentials) {
   const { data } = await login(credentials);
@@ -23,11 +24,13 @@ const handleLogin = async function (credentials: Credentials) {
 };
 
 const Login = () => {
+  const { setUser } = useAuthState();
+
   const { mutate, isPending, isError, error } = useMutation({
     mutationKey: ["login"],
     mutationFn: handleLogin,
-    onSuccess: () => {
-      console.log("Logged in");
+    onSuccess: (user) => {
+      setUser(user);
     },
   });
 
