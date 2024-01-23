@@ -1,5 +1,5 @@
-import { Credentials } from "./../types";
+import { Credentials, IUser } from "./../types";
 import api from "./client";
 
 export const login = (credentials: Credentials) =>
-  api.post("/auth/login", credentials);
+  api.post<IUser>("/auth/login", credentials);
