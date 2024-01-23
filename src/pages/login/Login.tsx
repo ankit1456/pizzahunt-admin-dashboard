@@ -14,8 +14,9 @@ import Logo from "../../components/icons/Logo";
 import "./login.css";
 import { useMutation } from "@tanstack/react-query";
 import { Credentials } from "../../types";
-import { login } from "../../http/api";
+import { login, logout } from "../../http/api";
 import { useAuthState } from "../../store";
+import { isAuthorized } from "../../utils/isAuthorized";
 
 const handleLogin = async function (credentials: Credentials) {
   const { data } = await login(credentials);
@@ -24,12 +25,23 @@ const handleLogin = async function (credentials: Credentials) {
 };
 
 const Login = () => {
-  const { setUser } = useAuthState();
+  const { user, setUser, logoutFromStore } = useAuthState();
+
+  const { mutate: logoutMutate } = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: logout,
+    onSuccess: () => {
+      logoutFromStore();
+    },
+  });
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationKey: ["login"],
     mutationFn: handleLogin,
-    onSuccess: (user) => {
+    onSuccess: async (user) => {
+      if (!isAuthorized(user.role)) {
+        return await logoutMutate();
+      }
       setUser(user);
     },
   });
@@ -50,7 +62,7 @@ const Login = () => {
           title={
             <Space className="login__title">
               <LockFilled />
-              Sign in
+              Sign in {user?.firstName}
             </Space>
           }
         >

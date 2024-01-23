@@ -4,7 +4,7 @@ import { IUser } from "./types";
 interface AuthState {
   user: IUser | null;
   setUser: (user: IUser) => void;
-  logout: () => void;
+  logoutFromStore: () => void;
 }
 
 export const useAuthState = create<AuthState>((set) => ({
@@ -12,7 +12,7 @@ export const useAuthState = create<AuthState>((set) => ({
   setUser: (user) => {
     set({ user });
   },
-  logout: () => {
+  logoutFromStore: () => {
     set({ user: null });
   },
 }));
