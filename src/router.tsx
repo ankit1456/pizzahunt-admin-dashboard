@@ -3,25 +3,32 @@ import HomePage from "./pages/Home";
 import Login from "./pages/login/Login";
 import Dashboard from "./layouts/Dashboard";
 import UnAuthenticated from "./layouts/UnAuthenticated";
+import RootLayout from "./layouts/RootLayout";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Dashboard />,
+    element: <RootLayout />,
     children: [
       {
         path: "",
-        element: <HomePage />,
+        element: <Dashboard />,
+        children: [
+          {
+            path: "",
+            element: <HomePage />,
+          },
+        ],
       },
-    ],
-  },
-  {
-    path: "/auth",
-    element: <UnAuthenticated />,
-    children: [
       {
-        path: "login",
-        element: <Login />,
+        path: "/auth",
+        element: <UnAuthenticated />,
+        children: [
+          {
+            path: "login",
+            element: <Login />,
+          },
+        ],
       },
     ],
   },
