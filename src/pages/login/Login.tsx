@@ -40,7 +40,7 @@ const Login = () => {
     mutationFn: handleLogin,
     onSuccess: async (user) => {
       if (!isAuthorized(user.role)) {
-        return await logoutMutate();
+        return logoutMutate();
       }
       setUser(user);
     },
