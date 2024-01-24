@@ -17,6 +17,7 @@ import { Credentials } from "../../types";
 import { login, logout } from "../../http/api";
 import { useAuthState } from "../../store";
 import { isAuthorized } from "../../utils/isAuthorized";
+import { AxiosError } from "axios";
 
 const handleLogin = async function (credentials: Credentials) {
   const { data } = await login(credentials);
@@ -46,9 +47,9 @@ const Login = () => {
     },
   });
 
-  if (error?.message === "Network Error") {
+  if (error instanceof AxiosError && error.code === "ERR_NETWORK") {
     error.message =
-      "Looks like we're having trouble reaching the network. Please check your connection and try again.";
+      "Looks like we're having trouble reaching the network. Please check your internet connection and try again.";
   }
   return (
     <Layout className="login__container">
