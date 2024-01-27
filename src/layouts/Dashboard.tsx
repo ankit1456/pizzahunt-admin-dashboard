@@ -105,10 +105,18 @@ const Dashboard = () => {
       <Layout>
         <Header style={{ paddingInline: 16, background: colorBgContainer }}>
           <Flex gap="middle" align="center" justify="space-between">
-            <Badge text="Global" status="success" />
+            <Badge
+              text={
+                user.tenant
+                  ? `${user.tenant.name}, ${user.tenant.address}`
+                  : "You are an admin"
+              }
+              status="success"
+            />
+
             <Flex gap={20} align="center">
               <Badge dot>
-                <FaBell size={20} />
+                <FaBell size={18} style={{ marginBottom: -5 }} />
               </Badge>
 
               <Dropdown
