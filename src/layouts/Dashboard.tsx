@@ -1,4 +1,4 @@
-import { Avatar, Badge, Dropdown, Flex, Layout, Menu, theme } from "antd";
+import { Avatar, Badge, Dropdown, Flex, Layout, Menu } from "antd";
 import { FaBell } from "react-icons/fa";
 import { FaGift, FaUserGroup } from "react-icons/fa6";
 import { IoIosRestaurant } from "react-icons/io";
@@ -11,53 +11,34 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import Logo from "../components/icons/Logo";
 import { logout } from "../http/api";
+import Pill from "../components/utils/pill/Pill";
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const items = [
   {
     key: "/",
-    icon: (
-      <div>
-        <MdDashboard size={20} />
-      </div>
-    ),
+    icon: <MdDashboard />,
     label: <NavLink to="/">Home</NavLink>,
   },
   {
     key: "/users",
-    icon: (
-      <div>
-        <FaUserGroup size={17} />
-      </div>
-    ),
+    icon: <FaUserGroup />,
     label: <NavLink to="/users">Users</NavLink>,
   },
   {
     key: "/restaurants",
-    icon: (
-      <div>
-        <IoIosRestaurant size={21} />
-      </div>
-    ),
+    icon: <IoIosRestaurant />,
     label: <NavLink to="/restaurants">Restaurants</NavLink>,
   },
   {
     key: "/products",
-    icon: (
-      <div>
-        <IoFastFood size={20} />
-      </div>
-    ),
+    icon: <IoFastFood />,
     label: <NavLink to="/products">Products</NavLink>,
   },
   {
     key: "/promos",
-    icon: (
-      <div>
-        <FaGift size={17} />
-      </div>
-    ),
+    icon: <FaGift />,
     label: <NavLink to="/promos">Promos</NavLink>,
   },
 ];
@@ -65,10 +46,6 @@ const items = [
 const Dashboard = () => {
   const { user, logoutFromStore } = useAuthState();
   const [collapsed, setCollapsed] = useState(false);
-
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
 
   const { mutate } = useMutation({
     mutationKey: ["logout"],
@@ -103,22 +80,23 @@ const Dashboard = () => {
         />
       </Sider>
       <Layout>
-        <Header style={{ paddingInline: 16, background: colorBgContainer }}>
+        <Header
+          className="header"
+          style={{
+            paddingLeft: collapsed ? 50 : 16,
+          }}
+        >
           <Flex gap="middle" align="center" justify="space-between">
-            <Badge
-              text={
-                user.tenant
-                  ? `${user.tenant.name}, ${user.tenant.address}`
-                  : "You are an admin"
-              }
-              status="success"
-            />
+            <Pill type="primary" fontSize={11.5}>
+              {user.tenant
+                ? `${user.tenant.name}, ${user.tenant.address}`
+                : "You are an admin"}
+            </Pill>
 
             <Flex gap={20} align="center">
               <Badge dot>
-                <FaBell size={18} style={{ marginBottom: -5 }} />
+                <FaBell size={16} style={{ marginBottom: -5 }} />
               </Badge>
-
               <Dropdown
                 menu={{
                   items: [
@@ -127,16 +105,20 @@ const Dashboard = () => {
                       label: "Logout",
                       onClick: () => mutate(),
                     },
+                    {
+                      key: "profile",
+                      label: "Profile",
+                    },
                   ],
                 }}
                 placement="bottomRight"
               >
-                <Avatar size={30}>A</Avatar>
+                <Avatar size={30}>{user.firstName[0]}</Avatar>
               </Dropdown>
             </Flex>
           </Flex>
         </Header>
-        <Content style={{ margin: "0 16px" }}>
+        <Content style={{ padding: "15px" }}>
           <Outlet />
         </Content>
         <Footer style={{ textAlign: "center" }}>

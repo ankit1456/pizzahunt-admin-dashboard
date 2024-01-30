@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   Checkbox,
+  ConfigProvider,
   Flex,
   Form,
   Input,
@@ -52,95 +53,97 @@ const Login = () => {
       "Looks like we're having trouble reaching the network. Please check your internet connection and try again.";
   }
   return (
-    <Layout className="login__container">
-      <Space direction="vertical" align="center" size="large">
-        <Layout.Content>
-          <Logo />
-        </Layout.Content>
-        <Card
-          bordered={false}
-          style={{ width: 330 }}
-          title={
-            <Space className="login__title">
-              <LockFilled />
-              Sign in {user?.firstName}
-            </Space>
-          }
-        >
-          <Form
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={(values) => {
-              mutate({
-                email: values.email,
-                password: values.password,
-              });
-            }}
+    <ConfigProvider theme={{ token: { fontSize: 13 } }}>
+      <Layout className="login__container">
+        <Space direction="vertical" align="center" size="large">
+          <Layout.Content>
+            <Logo />
+          </Layout.Content>
+          <Card
+            bordered={false}
+            style={{ width: 330 }}
+            title={
+              <Space className="login__title">
+                <LockFilled />
+                Sign in {user?.firstName}
+              </Space>
+            }
           >
-            {isError && (
-              <Alert
-                className="auth__alert"
-                type="error"
-                message={error.message}
-              />
-            )}
-            <Form.Item
-              rules={[
-                {
-                  required: true,
-                  message: "Please provide your email",
-                },
-                {
-                  type: "email",
-                  message: "Email is not valid",
-                },
-              ]}
-              name="email"
+            <Form
+              initialValues={{
+                remember: true,
+              }}
+              onFinish={(values) => {
+                mutate({
+                  email: values.email,
+                  password: values.password,
+                });
+              }}
             >
-              <Input
-                prefix={<UserOutlined className="login__input-icon" />}
-                placeholder="Email"
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please provide your password",
-                },
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined className="login__input-icon" />}
-                placeholder="Password"
-              />
-            </Form.Item>
-
-            <Flex justify="space-between" align="baseline">
-              <Form.Item name="remember" valuePropName="checked">
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-              <a className="login__forgot-link" href="#">
-                Forgot password?
-              </a>
-            </Flex>
-
-            <Form.Item>
-              <Button
-                loading={isPending}
-                type="primary"
-                htmlType="submit"
-                className="width-full"
+              {isError && (
+                <Alert
+                  className="form__alert"
+                  type="error"
+                  message={error.message}
+                />
+              )}
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: "Please provide your email",
+                  },
+                  {
+                    type: "email",
+                    message: "Email is not valid",
+                  },
+                ]}
+                name="email"
               >
-                Sign in
-              </Button>
-            </Form.Item>
-          </Form>
-        </Card>
-      </Space>
-    </Layout>
+                <Input
+                  prefix={<UserOutlined className="login__input-icon" />}
+                  placeholder="Email"
+                />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please provide your password",
+                  },
+                ]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined className="login__input-icon" />}
+                  placeholder="Password"
+                />
+              </Form.Item>
+
+              <Flex justify="space-between" align="baseline">
+                <Form.Item name="remember" valuePropName="checked">
+                  <Checkbox>Remember me</Checkbox>
+                </Form.Item>
+                <a className="font-12" href="#">
+                  Forgot password?
+                </a>
+              </Flex>
+
+              <Form.Item>
+                <Button
+                  loading={isPending}
+                  type="primary"
+                  htmlType="submit"
+                  className="width-full"
+                >
+                  Sign in
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        </Space>
+      </Layout>
+    </ConfigProvider>
   );
 };
 
