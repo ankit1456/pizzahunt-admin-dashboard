@@ -1,12 +1,12 @@
-interface ITenant {
+type TTenant = {
   id: string;
   name: string;
   address: string;
   createdAt: string;
   updatedAt: string;
-}
+};
 
-export interface IUser {
+export type TUser = {
   id: string;
   firstName: string;
   lastName: string;
@@ -14,10 +14,16 @@ export interface IUser {
   role: string;
   createdAt: string;
   updatedAt: string;
-  tenant?: ITenant;
-}
+  tenant?: TTenant;
+};
 
-export type Credentials = {
+export type TCredentials = {
   email: string;
   password: string;
 };
+
+export const enum Roles {
+  ADMIN = "admin",
+  MANAGER = "manager",
+  CUSTOMER = "customer",
+}

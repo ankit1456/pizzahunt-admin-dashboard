@@ -1,17 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import HomePage from "./pages/Home";
-import Login from "./pages/login/Login";
-import Dashboard from "./layouts/Dashboard";
-import UnAuthenticated from "./layouts/UnAuthenticated";
-import RootLayout from "./layouts/RootLayout";
+import { Dashboard, RootLayout, UnAuthenticatedLayout } from "./layouts";
+import { HomePage, LoginPage, PageNotFound } from "./pages";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
     element: <RootLayout />,
     children: [
       {
-        path: "",
+        path: "/",
         element: <Dashboard />,
         children: [
           {
@@ -38,13 +34,21 @@ export const router = createBrowserRouter([
       },
       {
         path: "/auth",
-        element: <UnAuthenticated />,
+        element: <UnAuthenticatedLayout />,
         children: [
           {
-            path: "login",
-            element: <Login />,
+            path: "signin",
+            element: <LoginPage />,
+          },
+          {
+            path: "forgot-password",
+            element: <div>Forgot password page</div>,
           },
         ],
+      },
+      {
+        path: "*",
+        element: <PageNotFound />,
       },
     ],
   },

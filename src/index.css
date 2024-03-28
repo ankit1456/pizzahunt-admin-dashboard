@@ -22,41 +22,6 @@
   width: 100%;
 }
 
-.ant-menu-item-active:hover {
-  color: var(--primary-color) !important;
-}
-.ant-menu-item-icon {
-  font-size: larger !important;
-}
-.ant-menu-item {
-  gap: 8px;
-}
-
-.header {
-  padding-inline: 16px;
-  background-color: #fff !important;
-}
-
-.header .pill {
-  font-weight: 500;
-}
-
 .font-12 {
   font-size: 12px;
-}
-
-.ant-menu-title-content {
-  font-size: 13.2px;
-}
-
-.ant-dropdown-menu-item {
-  font-size: 12.4px !important;
-}
-
-/* home */
-
-.greeting {
-  object-fit: contain;
-  margin-top: -2px;
-  height: 22px;
 }

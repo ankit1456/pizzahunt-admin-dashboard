@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import Login from "./Login";
+import LoginPage from "./Login";
 
 describe("Login page", () => {
   it("should render with required fields", () => {
-    render(<Login />);
+    render(<LoginPage />);
     //getBy -> throws an error
     //findBy -> Async
     //queryBy -> null

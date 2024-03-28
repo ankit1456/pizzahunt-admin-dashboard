@@ -1,18 +1,17 @@
 import { create } from "zustand";
-import { IUser } from "./types";
+import { devtools } from "zustand/middleware";
+import { TUser } from "./types";
 
-interface AuthState {
-  user: IUser | null;
-  setUser: (user: IUser) => void;
+type TAuthState = {
+  user: TUser | null;
+  setUser: (user: TUser) => void;
   logoutFromStore: () => void;
-}
+};
 
-export const useAuthState = create<AuthState>((set) => ({
-  user: null,
-  setUser: (user) => {
-    set({ user });
-  },
-  logoutFromStore: () => {
-    set({ user: null });
-  },
-}));
+export const useAuth = create<TAuthState>()(
+  devtools((set) => ({
+    user: null,
+    setUser: (user) => set({ user }),
+    logoutFromStore: () => set({ user: null }),
+  }))
+);

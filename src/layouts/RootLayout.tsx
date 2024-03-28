@@ -1,35 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { Outlet } from "react-router-dom";
-import { self } from "../http/api";
-import { useAuthState } from "../store";
 import { useEffect } from "react";
-import { AxiosError } from "axios";
-
-const getSelf = async () => {
-  const { data } = await self();
-  return data;
-};
+import { Outlet } from "react-router-dom";
+import Loader from "../components/utils/Loader";
+import { useSelf } from "../hooks";
+import { useAuth } from "../store";
 
 const RootLayout = () => {
-  const { setUser } = useAuthState();
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["self"],
-    queryFn: getSelf,
-    refetchOnWindowFocus: false,
-    retry: (failureCount: number, error) => {
-      if (error instanceof AxiosError && error.response?.status === 401) {
-        return false;
-      }
-
-      return failureCount < 3;
-    },
-  });
+  const { setUser } = useAuth();
+  const { user, isLoading } = useSelf();
 
   useEffect(() => {
     if (user) setUser(user);
   }, [user, setUser]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loader fullscreen size={40} />;
 
   return <Outlet />;
 };

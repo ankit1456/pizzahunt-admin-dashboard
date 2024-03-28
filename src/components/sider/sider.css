@@ -1,0 +1,15 @@
+.sider {
+  .ant-menu-item-active:hover {
+    color: var(--primary-color) !important;
+  }
+  .ant-menu-item-icon {
+    font-size: larger !important;
+  }
+  .ant-menu-item {
+    gap: 7px;
+  }
+
+  .ant-menu-title-content {
+    font-size: 13.2px;
+  }
+}

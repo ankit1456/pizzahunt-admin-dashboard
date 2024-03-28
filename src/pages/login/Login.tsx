@@ -1,3 +1,5 @@
+import { LockFilled, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { useMutation } from "@tanstack/react-query";
 import {
   Alert,
   Button,
@@ -10,44 +12,64 @@ import {
   Layout,
   Space,
 } from "antd";
-import { LockFilled, UserOutlined, LockOutlined } from "@ant-design/icons";
-import Logo from "../../components/icons/Logo";
-import "./login.css";
-import { useMutation } from "@tanstack/react-query";
-import { Credentials } from "../../types";
-import { login, logout } from "../../http/api";
-import { useAuthState } from "../../store";
-import { isAuthorized } from "../../utils/isAuthorized";
 import { AxiosError } from "axios";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Logo } from "../../components";
+import { useLogout, useSelf } from "../../hooks";
 
-const handleLogin = async function (credentials: Credentials) {
+import { login } from "../../http/api";
+import { useAuth } from "../../store";
+import { Roles, TCredentials, TUser } from "../../types";
+import { isAuthorized } from "../../utils";
+import "./login.css";
+
+const handleLogin = async function (credentials: TCredentials) {
   const { data } = await login(credentials);
 
   return data;
 };
 
-const Login = () => {
-  const { user, setUser, logoutFromStore } = useAuthState();
+const validateMessages = {
+  required: "Please provide your ${label} ",
+  types: {
+    email: "Please provide an valid ${label}",
+  },
+};
 
-  const { mutate: logoutMutate } = useMutation({
-    mutationKey: ["logout"],
-    mutationFn: logout,
-    onSuccess: () => {
-      logoutFromStore();
-    },
-  });
+function LoginPage() {
+  const { setUser } = useAuth();
+  const [nonAdminError, setNonAdminError] = useState("");
+
+  const [form] = Form.useForm();
+
+  const { logoutMutate } = useLogout();
+
+  const { refetch: refetchSelf } = useSelf(false);
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationKey: ["login"],
     mutationFn: handleLogin,
     onSuccess: async (user) => {
+      if (user.role === Roles.MANAGER) {
+        const { data } = await refetchSelf();
+        setUser(data as TUser);
+      }
       if (!isAuthorized(user.role)) {
+        setNonAdminError("Admin privileges required");
         return logoutMutate();
       }
       setUser(user);
     },
   });
 
+  let errors: string[] = [];
+
+  if (error instanceof AxiosError) {
+    errors = error.response?.data.errors.map(
+      (err: { message: string }) => err.message
+    );
+  }
   if (error instanceof AxiosError && error.code === "ERR_NETWORK") {
     error.message =
       "Looks like we're having trouble reaching the network. Please check your internet connection and try again.";
@@ -61,19 +83,21 @@ const Login = () => {
           </Layout.Content>
           <Card
             bordered={false}
-            style={{ width: 330 }}
+            style={{ minWidth: 330 }}
             title={
               <Space className="login__title">
                 <LockFilled />
-                Sign in {user?.firstName}
+                Sign in
               </Space>
             }
           >
             <Form
+              form={form}
+              validateMessages={validateMessages}
               initialValues={{
                 remember: true,
               }}
-              onFinish={(values) => {
+              onFinish={(values: TCredentials & { remember: boolean }) => {
                 mutate({
                   email: values.email,
                   password: values.password,
@@ -84,37 +108,38 @@ const Login = () => {
                 <Alert
                   className="form__alert"
                   type="error"
-                  message={error.message}
+                  message={errors.map((err) => (
+                    <div key={err}>{err}</div>
+                  ))}
+                />
+              )}
+              {nonAdminError && (
+                <Alert
+                  className="form__alert"
+                  type="error"
+                  message={nonAdminError}
                 />
               )}
               <Form.Item
                 rules={[
-                  {
-                    required: true,
-                    message: "Please provide your email",
-                  },
-                  {
-                    type: "email",
-                    message: "Email is not valid",
-                  },
+                  { type: "email", required: true, validateTrigger: "onBlur" },
                 ]}
                 name="email"
               >
                 <Input
+                  autoFocus={true}
+                  onBlur={() => {
+                    form.validateFields(["email"]);
+                  }}
                   prefix={<UserOutlined className="login__input-icon" />}
                   placeholder="Email"
                 />
               </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please provide your password",
-                  },
-                ]}
-              >
+              <Form.Item name="password" rules={[{ required: true }]}>
                 <Input.Password
+                  onBlur={() => {
+                    form.validateFields(["password"]);
+                  }}
                   prefix={<LockOutlined className="login__input-icon" />}
                   placeholder="Password"
                 />
@@ -124,9 +149,9 @@ const Login = () => {
                 <Form.Item name="remember" valuePropName="checked">
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
-                <a className="font-12" href="#">
+                <Link className="font-12" to="/auth/forgot-password">
                   Forgot password?
-                </a>
+                </Link>
               </Flex>
 
               <Form.Item>
@@ -145,6 +170,6 @@ const Login = () => {
       </Layout>
     </ConfigProvider>
   );
-};
+}
 
-export default Login;
+export default LoginPage;

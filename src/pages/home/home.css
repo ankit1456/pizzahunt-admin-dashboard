@@ -1,0 +1,11 @@
+.home {
+  .greeting__text {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  .greeting__emoji {
+    object-fit: contain;
+    margin-top: -2px;
+    height: 22px;
+  }
+}

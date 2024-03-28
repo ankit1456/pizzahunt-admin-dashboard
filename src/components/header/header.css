@@ -1,0 +1,23 @@
+.header {
+  padding-inline: 16px;
+  background-color: #fff !important;
+
+  .pill {
+    font-weight: 500;
+  }
+
+  .header__dropdown {
+    padding-inline: 10px;
+  }
+
+  .header__avatar--container {
+    cursor: pointer;
+  }
+  .header__avatar {
+    background-color: var(--primary-color);
+  }
+}
+
+.ant-dropdown-menu-title-content {
+  font-size: 12.8px;
+}

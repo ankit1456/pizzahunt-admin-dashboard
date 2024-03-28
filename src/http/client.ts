@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthState } from "../store";
+import { useAuth } from "../store";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_API_URL,
@@ -27,7 +27,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response.status === 401 && !originalRequest._isRetry) {
+    if (error.response?.status === 401 && !originalRequest._isRetry) {
       originalRequest._isRetry = true;
       try {
         const headers = { ...originalRequest.headers };
@@ -35,7 +35,7 @@ api.interceptors.response.use(
         await refreshToken();
         return api.request({ ...originalRequest, headers });
       } catch (error) {
-        useAuthState.getState().logoutFromStore();
+        useAuth.getState().logoutFromStore();
         return Promise.reject(error);
       }
     }

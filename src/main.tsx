@@ -1,30 +1,24 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import "antd/dist/reset.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "antd/dist/reset.css";
+import App from "./App";
 import "./index.css";
-import { RouterProvider } from "react-router-dom";
-import { router } from "./router.tsx";
-import { ConfigProvider } from "antd";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 50000,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider
-        theme={{
-          token: {
-            fontFamily: "Poppins,sans-serif",
-            colorText: "#363636",
-            colorPrimary: "#F65F42",
-            colorLink: "#F65F42",
-            colorFillSecondary: "#FFF5F0",
-          },
-        }}
-      >
-        <RouterProvider router={router} />
-      </ConfigProvider>
+      <App />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
 );

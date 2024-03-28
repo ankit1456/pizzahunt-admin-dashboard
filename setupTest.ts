@@ -12,6 +12,7 @@ beforeEach(() => {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   }));
+
   const computedStyleMock = vi.fn().mockImplementation(() => ({}));
   vi.stubGlobal("matchMedia", matchMediaMock);
   vi.stubGlobal("computedStyle", computedStyleMock);
