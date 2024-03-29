@@ -18,7 +18,11 @@ const Dashboard = () => {
       <Sider collapsed={collapsed} setCollapsed={setCollapsed} />
       <Layout>
         <Header collapsed={collapsed} />
-        <Layout.Content style={{ padding: "15px" }}>
+        <Layout.Content
+          style={{
+            padding: "1.3rem",
+          }}
+        >
           <Outlet />
         </Layout.Content>
         <Layout.Footer style={{ textAlign: "center" }}>

@@ -42,7 +42,13 @@ function Header({ collapsed }: Props) {
 
         <Flex gap={20} align="center" className="header__dropdown">
           <Badge dot={1 > 0}>
-            <BellFilled style={{ fontSize: "1rem", cursor: "pointer" }} />
+            <BellFilled
+              style={{
+                fontSize: "1rem",
+                cursor: "pointer",
+                color: "var(--color-gray)",
+              }}
+            />
           </Badge>
           <Dropdown
             menu={{
