@@ -1,6 +1,7 @@
 :root {
   --primary-color: #f65f42;
   --primary-bg-color: #feece8;
+  --color-text-light: #feece8;
   --color-blue: #14aaff;
   --color-bg-blue: #14aaff1f;
   --color-red: #ff2727;
@@ -9,6 +10,7 @@
   --color-bg-green: #1cb45e34;
   --color-gray: #5f5f5f;
   --color-bg-gray: #4f4f4f1f;
+  --color-dark: #141414;
 }
 
 .form__alert {

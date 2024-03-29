@@ -2,6 +2,13 @@
   height: 100dvh;
   display: grid;
   place-items: center;
+
+  .form__alert {
+    font-size: 0.71rem;
+    margin-bottom: 16px;
+    max-width: 17.6rem;
+    padding: 6px 10px;
+  }
 }
 
 .login__title {

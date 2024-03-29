@@ -6,9 +6,11 @@ const Pill = ({
   children,
   type,
   fontSize = 11.5,
+  style,
 }: PropsWithChildren<{
   type: "primary" | "success" | "onway" | "error" | "draft";
   fontSize?: number;
+  style?: object;
 }>) => {
   return (
     <Space wrap>
@@ -16,6 +18,7 @@ const Pill = ({
         bordered={false}
         className={`pill ${type}-pill`}
         style={{
+          ...style,
           fontSize,
         }}
       >

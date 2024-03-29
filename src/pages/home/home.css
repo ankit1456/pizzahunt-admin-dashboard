@@ -2,11 +2,88 @@
   .greeting__text {
     font-size: 1.1rem;
     font-weight: 500;
-    margin-bottom: 1.8rem;
+    margin-bottom: 1rem;
   }
   .greeting__emoji {
     object-fit: contain;
     margin-top: -6px;
     height: 1.37rem;
   }
+
+  .stat-order-icon {
+    background-color: var(--color-bg-green);
+    color: var(--color-green);
+    border-radius: 10px;
+    padding: 2px;
+    padding-bottom: 4.4px;
+  }
+
+  .stat-sale-icon {
+    background-color: var(--color-bg-blue);
+    color: var(--color-blue);
+    border-radius: 10px;
+    padding: 6px;
+    padding-bottom: 4px;
+  }
+  .ant-list-item {
+    padding-block: 12px !important;
+  }
+  .sales-chart {
+    .ant-card-head {
+      border-bottom: none;
+    }
+
+    .sales-chart-filter {
+      background-color: var(--color-bg-gray);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sales-active-filter {
+      background-color: var(--primary-color);
+      color: var(--color-text-light);
+    }
+  }
+
+  .recent-orders {
+    .recent-orders-footer {
+      color: var(--color-dark);
+      margint-op: 0.5rem;
+    }
+
+    .ant-card-body {
+      padding: 5px;
+    }
+
+    .ant-list-items {
+      max-height: 44vh;
+      overflow: auto;
+    }
+
+    .ant-list-item {
+      margin-bottom: -6px;
+    }
+  }
 }
+
+/* ::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+/* ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+} */
+
+/* Handle */
+/* ::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 8px;
+} */

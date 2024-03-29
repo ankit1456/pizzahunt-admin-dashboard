@@ -108,9 +108,10 @@ function LoginPage() {
                 <Alert
                   className="form__alert"
                   type="error"
-                  message={errors.map((err) => (
-                    <div key={err}>{err}</div>
-                  ))}
+                  message={
+                    errors?.map((err) => <div key={err}>{err}</div>) ??
+                    error.message
+                  }
                 />
               )}
               {nonAdminError && (
