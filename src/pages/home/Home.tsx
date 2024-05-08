@@ -1,11 +1,13 @@
 import { Card, Col, Flex, List, Row, Typography } from "antd";
+import { useState } from "react";
+import { GiPaperBagFolded } from "react-icons/gi";
+import { IoStatsChart } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import RecentOrders from "../../features/orders/recentOrders/RecentOrders";
+import StatBox from "../../features/stats/stat-box/StatBox";
 import { useAuth } from "../../store";
 import { getGreetings } from "../../utils";
 import "./home.css";
-import { GiPaperBagFolded } from "react-icons/gi";
-import { IoStatsChart } from "react-icons/io5";
-import { StatBox, RecentOrder } from "../../components";
-import { useState } from "react";
 
 const data = [
   "Racing car sprays burning fuel into crowd.",
@@ -20,7 +22,6 @@ const data = [
 
 function Home() {
   const { user } = useAuth();
-
   const [salesFilter, setSalesFilter] = useState("W");
 
   return (
@@ -131,10 +132,14 @@ function Home() {
                   </Typography.Text>
                 </Flex>
               }
-              footer={<div className="recent-orders-footer">All orders</div>}
+              footer={
+                <Link className="recent-orders-footer" to="/orders">
+                  See all orders
+                </Link>
+              }
               bordered
               dataSource={data}
-              renderItem={(item) => <RecentOrder key={item} />}
+              renderItem={(item) => <RecentOrders key={item} />}
             />
           </Card>
         </Col>

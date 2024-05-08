@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
+import AdminProtected from "./features/authentication/AdminProtected";
 import { Dashboard, RootLayout, UnAuthenticatedLayout } from "./layouts";
-import { HomePage, LoginPage, PageNotFound } from "./pages";
+import { HomePage, LoginPage, PageNotFound, Users } from "./pages";
 
 export const router = createBrowserRouter([
   {
@@ -11,12 +12,16 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
         children: [
           {
-            path: "",
+            index: true,
             element: <HomePage />,
           },
           {
             path: "users",
-            element: <div>Users</div>,
+            element: (
+              <AdminProtected>
+                <Users />,
+              </AdminProtected>
+            ),
           },
           {
             path: "products",

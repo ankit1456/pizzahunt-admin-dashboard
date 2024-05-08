@@ -1,5 +1,5 @@
 import { Space, Tag } from "antd";
-import { PropsWithChildren } from "react";
+import { CSSProperties, PropsWithChildren } from "react";
 import "./pill.css";
 
 const Pill = ({
@@ -8,9 +8,9 @@ const Pill = ({
   fontSize = 11.5,
   style,
 }: PropsWithChildren<{
-  type: "primary" | "success" | "onway" | "error" | "draft";
+  type: "primary" | "success" | "secondary" | "error" | "draft";
   fontSize?: number;
-  style?: object;
+  style?: CSSProperties;
 }>) => {
   return (
     <Space wrap>

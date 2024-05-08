@@ -15,12 +15,11 @@ import {
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Logo } from "../../components";
 import { useLogout, useSelf } from "../../hooks";
-
+import { Logo } from "../../ui";
 import { login } from "../../http/api";
 import { useAuth } from "../../store";
-import { Roles, TCredentials, TUser } from "../../types";
+import { Roles, TCredentials, TUser } from "../../types/user.types";
 import { isAuthorized } from "../../utils";
 import "./login.css";
 

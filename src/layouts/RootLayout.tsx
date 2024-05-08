@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import Loader from "../components/utils/Loader";
 import { useSelf } from "../hooks";
 import { useAuth } from "../store";
+import { Loader } from "../ui";
 
 const RootLayout = () => {
   const { setUser } = useAuth();

@@ -17,7 +17,10 @@ export default function useSelf(enabled = true) {
     queryFn: getSelf,
     enabled,
     retry: (failureCount: number, error) => {
-      if (error instanceof AxiosError && error.response?.status === 401) {
+      if (
+        error instanceof AxiosError &&
+        (error.response?.status === 401 || !error.response)
+      ) {
         return false;
       }
 

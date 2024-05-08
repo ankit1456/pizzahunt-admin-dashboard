@@ -4,8 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../store";
 
 import { useState } from "react";
-import Header from "../components/header/Header";
-import Sider from "../components/sider/Sider";
+import { Header, Sider } from "../ui";
 
 const Dashboard = () => {
   const { user } = useAuth();

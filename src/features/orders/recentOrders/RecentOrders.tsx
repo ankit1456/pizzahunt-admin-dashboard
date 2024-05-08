@@ -1,6 +1,6 @@
 import { Flex, List } from "antd";
-import Pill from "../utils/pill/Pill";
-import "./recentOrder.css";
+import { Pill } from "../../../ui";
+import "./recentOrders.css";
 
 const order = {
   customerName: "Sophia Garcia",
@@ -9,7 +9,7 @@ const order = {
   status: "preparing",
 };
 
-function RecentOrder() {
+function RecentOrders() {
   return (
     <List.Item className="recent-order">
       <Flex className="width-full" align="baseline" justify="space-between">
@@ -30,4 +30,4 @@ function RecentOrder() {
   );
 }
 
-export default RecentOrder;
+export default RecentOrders;

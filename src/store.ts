@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { TUser } from "./types";
+import { TUser } from "./types/user.types";
 
 type TAuthState = {
   user: TUser | null;

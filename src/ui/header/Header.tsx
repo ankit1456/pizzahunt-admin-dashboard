@@ -3,8 +3,8 @@ import { Avatar, Badge, Dropdown, Flex, Layout } from "antd";
 import { IoIosArrowDown } from "react-icons/io";
 import { useLogout } from "../../hooks";
 import { useAuth } from "../../store";
-import { Roles } from "../../types";
-import Pill from "../utils/pill/Pill";
+import { Roles } from "../../types/user.types";
+import Pill from "../pill/Pill";
 import "./header.css";
 
 type Props = {
@@ -42,13 +42,7 @@ function Header({ collapsed }: Props) {
 
         <Flex gap={20} align="center" className="header__dropdown">
           <Badge dot={1 > 0}>
-            <BellFilled
-              style={{
-                fontSize: "1rem",
-                cursor: "pointer",
-                color: "var(--color-gray)",
-              }}
-            />
+            <BellFilled className="notification-icon" />
           </Badge>
           <Dropdown
             menu={{
@@ -60,7 +54,7 @@ function Header({ collapsed }: Props) {
                 },
               ],
             }}
-            placement="bottomCenter"
+            placement="bottom"
           >
             <Flex align="center" gap={7} className="header__avatar--container">
               <Avatar className="header__avatar" size={30}>

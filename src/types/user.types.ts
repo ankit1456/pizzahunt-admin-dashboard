@@ -1,10 +1,4 @@
-type TTenant = {
-  id: string;
-  name: string;
-  address: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { TTenant } from "./tenant.types";
 
 export type TUser = {
   id: string;
