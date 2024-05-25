@@ -72,8 +72,17 @@ function Users() {
       {isLoading && <Loader />}
       {isError && <div>{error?.message}</div>}
 
-      <UsersFilter />
-      <Table dataSource={users} columns={columns} scroll={{ x: 700 }} />
+      <UsersFilter
+        onFilterChange={(filterName, filterValue) => {
+          console.log(filterName, filterValue);
+        }}
+      />
+      <Table
+        rowKey="id"
+        dataSource={users}
+        columns={columns}
+        scroll={{ x: 700 }}
+      />
     </Flex>
   );
 }

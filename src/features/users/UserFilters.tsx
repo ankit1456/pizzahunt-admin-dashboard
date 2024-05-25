@@ -3,7 +3,11 @@ import { Button, Card, Col, Input, Row, Select } from "antd";
 import { Roles } from "../../types/user.types";
 import "./userFilters.css";
 
-function UsersFilter() {
+type Props = {
+  readonly onFilterChange: (filterName: string, filterValue: string) => void;
+};
+
+function UsersFilter({ onFilterChange }: Props) {
   return (
     <Card className="user-filters">
       <Row justify="space-between">
@@ -13,6 +17,9 @@ function UsersFilter() {
               <Input.Search
                 className="width-full user-search"
                 placeholder="search user"
+                onChange={(e) =>
+                  onFilterChange("userSearchQuery", e.target.value)
+                }
               />
             </Col>
             <Col span={6}>
@@ -21,6 +28,9 @@ function UsersFilter() {
                 defaultValue="all"
                 className="width-full"
                 placeholder="role"
+                onChange={(selectedOption) =>
+                  onFilterChange("userRoleQuery", selectedOption)
+                }
               >
                 <Select.Option value="all">All Users </Select.Option>
                 <Select.Option value={Roles.ADMIN}>Admin</Select.Option>
@@ -29,7 +39,14 @@ function UsersFilter() {
               </Select>
             </Col>
             <Col span={6}>
-              <Select allowClear className="width-full" placeholder="status">
+              <Select
+                allowClear
+                className="width-full"
+                placeholder="status"
+                onChange={(selectedOption) =>
+                  onFilterChange("userStatusQuery", selectedOption)
+                }
+              >
                 <Select.Option value="active">Active</Select.Option>
                 <Select.Option value="inActive">InActive</Select.Option>
                 <Select.Option value="all">All Users</Select.Option>
