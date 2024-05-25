@@ -1,10 +1,11 @@
 import { Breadcrumb, Flex, Table } from "antd";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import UsersFilter from "../../features/users/UsersFilter";
+import UsersFilter from "../../features/users/userFilters/UserFilters";
 import { useUsers } from "../../hooks";
 import { TUser } from "../../types/user.types";
 import { Loader } from "../../ui";
+import { formatDate } from "../../utils";
 import "./users.css";
 
 const columns = [
@@ -39,7 +40,7 @@ const columns = [
     title: "Created At",
     dataIndex: "createdAt",
     key: "createdAt ",
-    render: (createdAt: string) => new Date(createdAt).toLocaleString(),
+    render: (createdAt: string) => formatDate(new Date(createdAt)),
   },
 ];
 

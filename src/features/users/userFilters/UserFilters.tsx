@@ -1,10 +1,10 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Input, Row, Select } from "antd";
-import { Roles } from "../../types/user.types";
+import { Roles } from "../../../types/user.types";
 
 function UsersFilter() {
   return (
-    <Card>
+    <Card className="user-filters">
       <Row justify="space-between">
         <Col span={16}>
           <Row gutter={20}>
@@ -12,12 +12,7 @@ function UsersFilter() {
               <Input.Search className="width-full" placeholder="search user" />
             </Col>
             <Col span={6}>
-              <Select
-                allowClear
-                className="width-full"
-                style={{ fontSize: ".2rem" }}
-                placeholder="status"
-              >
+              <Select allowClear className="width-full" placeholder="status">
                 <Select.Option value="inActive">InActive</Select.Option>
                 <Select.Option value="active">Active</Select.Option>
               </Select>
@@ -33,7 +28,7 @@ function UsersFilter() {
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />}>
-            Create user
+            add user
           </Button>
         </Col>
       </Row>

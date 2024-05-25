@@ -25,15 +25,15 @@
 }
 
 .font-12 {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .ant-dropdown-menu-title-content {
-  font-size: 12.8px;
+  font-size: 0.85rem !important;
 }
 
-.ant-dropdown {
-  font-size: 10px !important;
+.ant-select-dropdown * {
+  font-size: 0.77rem !important;
 }
 
 .link:hover {

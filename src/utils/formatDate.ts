@@ -3,6 +3,7 @@ const formatDate = function (date: Date) {
 
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "short",
+    timeStyle: "short",
   }).format(date);
 };
 
