@@ -1,7 +1,7 @@
 import { Breadcrumb, Flex, Table } from "antd";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import UsersFilter from "../../features/users/userFilters/UserFilters";
+import UsersFilter from "../../features/users/UserFilters";
 import { useUsers } from "../../hooks";
 import { TUser } from "../../types/user.types";
 import { Loader } from "../../ui";

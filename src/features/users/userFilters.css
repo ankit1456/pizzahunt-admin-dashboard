@@ -1,0 +1,6 @@
+.user-filters {
+  .user-search input {
+    font-size: small;
+    padding-block: 5px;
+  }
+}
