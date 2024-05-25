@@ -1,13 +1,13 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Input, Row, Select } from "antd";
-import { Roles } from "../../types/user.types";
+import { Card, Col, Input, Row, Select } from "antd";
+import { PropsWithChildren } from "react";
+import { Roles } from "../../../types/user.types";
 import "./userFilters.css";
 
 type Props = {
   readonly onFilterChange: (filterName: string, filterValue: string) => void;
 };
 
-function UsersFilter({ onFilterChange }: Props) {
+function UsersFilter({ onFilterChange, children }: PropsWithChildren<Props>) {
   return (
     <Card className="user-filters">
       <Row justify="space-between">
@@ -54,11 +54,7 @@ function UsersFilter({ onFilterChange }: Props) {
             </Col>
           </Row>
         </Col>
-        <Col>
-          <Button type="primary" icon={<PlusOutlined />}>
-            Add user
-          </Button>
-        </Col>
+        <Col>{children}</Col>
       </Row>
     </Card>
   );

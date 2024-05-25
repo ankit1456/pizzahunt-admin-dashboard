@@ -1,12 +1,15 @@
-import { Breadcrumb, Flex, Table } from "antd";
+import { Breadcrumb, Button, Flex, Table } from "antd";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import UsersFilter from "../../features/users/UserFilters";
+import UsersFilter from "../../features/users/userFilters/UserFilters";
 import { useUsers } from "../../hooks";
 import { TUser } from "../../types/user.types";
 import { Loader } from "../../ui";
 import { formatDate } from "../../utils";
 import "./users.css";
+import NewUser from "../../features/users/AddUser";
+import { PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
 
 const columns = [
   {
@@ -46,6 +49,7 @@ const columns = [
 
 function Users() {
   const { users, isLoading, isError, error } = useUsers();
+  const [isAddUserDrawerOpen, setIsAddUserDrawerOpen] = useState(false);
 
   return (
     <Flex className="users" vertical gap={10}>
@@ -76,12 +80,25 @@ function Users() {
         onFilterChange={(filterName, filterValue) => {
           console.log(filterName, filterValue);
         }}
-      />
+      >
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setIsAddUserDrawerOpen((open) => !open)}
+        >
+          Add user
+        </Button>
+      </UsersFilter>
       <Table
         rowKey="id"
         dataSource={users}
         columns={columns}
         scroll={{ x: 700 }}
+      />
+
+      <NewUser
+        isAddUserDrawerOpen={isAddUserDrawerOpen}
+        setIsAddUserDrawerOpen={setIsAddUserDrawerOpen}
       />
     </Flex>
   );
