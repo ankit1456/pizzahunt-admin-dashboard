@@ -1,14 +1,14 @@
-import { PlusOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Flex, Table } from "antd";
-import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import AddUser from "../../features/users/AddUserDrawer";
-import UsersFilter from "../../features/users/userFilters/UserFilters";
-import { useUsers } from "../../hooks";
-import { TUser } from "../../types/user.types";
+import RestaurantFilters from "../../features/restaurants/restaurantFilters/restaurantFilters";
+import useRestaurants from "../../hooks/useRestaurants";
 import { Loader } from "../../ui";
 import { formatDate } from "../../utils";
+import { TTenant } from "../../types/tenant.types";
+import { PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import AddRestaurant from "../../features/restaurants/AddRestaurantDrawer";
 
 const columns = [
   {
@@ -19,24 +19,17 @@ const columns = [
   },
   {
     title: "Name",
-    dataIndex: "firstName",
+    dataIndex: "name",
     key: "name",
-    render: (firstName: string, user: TUser) => (
-      <Link to={`/users/${firstName}`}>
-        {firstName} {user.lastName}
-      </Link>
+    render: (name: string, restaurant: TTenant) => (
+      <Link to={`/restaurants/${restaurant.id}`}>{name}</Link>
     ),
   },
 
   {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Role",
-    dataIndex: "role",
-    key: "role",
+    title: "Address",
+    dataIndex: "address",
+    key: "address",
   },
   {
     title: "Created At",
@@ -46,9 +39,10 @@ const columns = [
   },
 ];
 
-function Users() {
-  const { users, isLoading, isError, error } = useUsers();
-  const [isAddUserDrawerOpen, setIsAddUserDrawerOpen] = useState(false);
+function Restaurants() {
+  const { restaurants, isLoading, isError, error } = useRestaurants();
+  const [isAddRestaurantDrawerOpen, setIsAddRestaurantDrawerOpen] =
+    useState(false);
 
   return (
     <Flex className="users" vertical gap={10}>
@@ -65,8 +59,8 @@ function Users() {
           },
           {
             title: (
-              <Link className="link" to="/users">
-                Users
+              <Link className="link" to="/restaurants">
+                Restaurants
               </Link>
             ),
           },
@@ -75,32 +69,28 @@ function Users() {
       {isLoading && <Loader />}
       {isError && <div>{error?.message}</div>}
 
-      <UsersFilter
-        onFilterChange={(filterName, filterValue) => {
-          console.log(filterName, filterValue);
-        }}
-      >
+      <RestaurantFilters>
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => setIsAddUserDrawerOpen((open) => !open)}
+          onClick={() => setIsAddRestaurantDrawerOpen((open) => !open)}
         >
-          Add User
+          Add Restaurant
         </Button>
-      </UsersFilter>
+      </RestaurantFilters>
       <Table
         rowKey="id"
-        dataSource={users}
+        dataSource={restaurants}
         columns={columns}
         scroll={{ x: 700 }}
       />
 
-      <AddUser
-        isAddUserDrawerOpen={isAddUserDrawerOpen}
-        setIsAddUserDrawerOpen={setIsAddUserDrawerOpen}
+      <AddRestaurant
+        isAddRestaurantDrawerOpen={isAddRestaurantDrawerOpen}
+        setIsAddRestaurantDrawerOpen={setIsAddRestaurantDrawerOpen}
       />
     </Flex>
   );
 }
 
-export default Users;
+export default Restaurants;

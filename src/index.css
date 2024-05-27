@@ -42,3 +42,7 @@
   text-decoration: underline;
   text-underline-offset: 1px;
 }
+
+.ant-table table {
+  font-size: 0.78rem;
+}

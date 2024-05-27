@@ -1,16 +1,22 @@
-import { Button, Drawer, Space } from "antd";
+import { Button, Drawer, Space, theme } from "antd";
 import { Dispatch, SetStateAction } from "react";
+import AddUserForm from "./AddUserForm";
 
 type Props = {
   isAddUserDrawerOpen: boolean;
   setIsAddUserDrawerOpen: Dispatch<SetStateAction<boolean>>;
 };
-function AddUser({
+function AddUserDrawer({
   isAddUserDrawerOpen,
   setIsAddUserDrawerOpen,
 }: Readonly<Props>) {
+  const {
+    token: { colorBgLayout },
+  } = theme.useToken();
+
   return (
     <Drawer
+      styles={{ body: { background: colorBgLayout } }}
       title="Add User"
       width={720}
       destroyOnClose
@@ -23,13 +29,9 @@ function AddUser({
         </Space>
       }
     >
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima,
-        expedita? Magnam, dolore cum? Provident, tenetur? Porro quidem sint
-        aliquam nihil.
-      </p>
+      <AddUserForm />
     </Drawer>
   );
 }
 
-export default AddUser;
+export default AddUserDrawer;
