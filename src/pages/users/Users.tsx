@@ -1,9 +1,10 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Flex, Table } from "antd";
+import { Breadcrumb, Button, Flex, Form, Table } from "antd";
 import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import AddUser from "../../features/users/AddUserDrawer";
+import AddUserDrawer from "../../features/users/AddUserDrawer";
+import AddUserForm from "../../features/users/AddUserForm";
 import UsersFilter from "../../features/users/userFilters/UserFilters";
 import { useUsers } from "../../hooks";
 import { TUser } from "../../types/user.types";
@@ -95,10 +96,14 @@ function Users() {
         scroll={{ x: 700 }}
       />
 
-      <AddUser
+      <AddUserDrawer
         isAddUserDrawerOpen={isAddUserDrawerOpen}
         setIsAddUserDrawerOpen={setIsAddUserDrawerOpen}
-      />
+      >
+        <Form layout="vertical">
+          <AddUserForm />
+        </Form>
+      </AddUserDrawer>
     </Flex>
   );
 }

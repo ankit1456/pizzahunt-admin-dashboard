@@ -1,7 +1,6 @@
 import { Card, Col, Input, Row, Select } from "antd";
 import { PropsWithChildren } from "react";
 import { Roles } from "../../../types/user.types";
-import "./userFilters.css";
 
 type Props = {
   readonly onFilterChange: (filterName: string, filterValue: string) => void;

@@ -1,6 +1,5 @@
 import { Button, Drawer, Space, theme } from "antd";
-import { Dispatch, SetStateAction } from "react";
-import AddUserForm from "./AddUserForm";
+import { Dispatch, PropsWithChildren, SetStateAction } from "react";
 
 type Props = {
   isAddUserDrawerOpen: boolean;
@@ -9,7 +8,8 @@ type Props = {
 function AddUserDrawer({
   isAddUserDrawerOpen,
   setIsAddUserDrawerOpen,
-}: Readonly<Props>) {
+  children,
+}: PropsWithChildren<Props>) {
   const {
     token: { colorBgLayout },
   } = theme.useToken();
@@ -29,7 +29,7 @@ function AddUserDrawer({
         </Space>
       }
     >
-      <AddUserForm />
+      {children}
     </Drawer>
   );
 }

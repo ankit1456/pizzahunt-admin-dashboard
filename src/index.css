@@ -46,3 +46,8 @@
 .ant-table table {
   font-size: 0.78rem;
 }
+
+.ant-input-search input {
+  padding-block: 5px !important;
+  font-size: small !important;
+}

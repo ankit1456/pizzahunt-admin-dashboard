@@ -1,6 +1,5 @@
 .restaurant-filters {
   .restaurant-search input {
-    font-size: small;
-    padding-block: 1px;
+    padding-block: 1px !important;
   }
 }
