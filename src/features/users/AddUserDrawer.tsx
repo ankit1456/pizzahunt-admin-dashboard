@@ -1,13 +1,15 @@
-import { Button, Drawer, Space, theme } from "antd";
-import { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import { Button, Drawer, Form, FormInstance, Space, theme } from "antd";
+import { PropsWithChildren } from "react";
 
 type Props = {
   isAddUserDrawerOpen: boolean;
-  setIsAddUserDrawerOpen: Dispatch<SetStateAction<boolean>>;
+  closeAddUserDrawer: () => void;
+  form: FormInstance;
 };
 function AddUserDrawer({
   isAddUserDrawerOpen,
-  setIsAddUserDrawerOpen,
+  closeAddUserDrawer,
+  form,
   children,
 }: PropsWithChildren<Props>) {
   const {
@@ -16,16 +18,31 @@ function AddUserDrawer({
 
   return (
     <Drawer
-      styles={{ body: { background: colorBgLayout } }}
+      styles={{
+        body: { background: colorBgLayout },
+      }}
+      size="large"
       title="Add User"
-      width={720}
       destroyOnClose
       open={isAddUserDrawerOpen}
-      onClose={() => setIsAddUserDrawerOpen((open) => !open)}
+      onClose={closeAddUserDrawer}
       extra={
         <Space>
-          <Button>Cancel</Button>
-          <Button type="primary">Submit</Button>
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Button
+              onClick={() => {
+                form.resetFields();
+                closeAddUserDrawer();
+              }}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Button onClick={() => form.submit()} type="primary">
+              Submit
+            </Button>
+          </Form.Item>
         </Space>
       }
     >

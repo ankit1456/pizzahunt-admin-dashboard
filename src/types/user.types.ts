@@ -5,10 +5,18 @@ export type TUser = {
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role: Roles;
   createdAt: string;
   updatedAt: string;
   tenant?: TTenant;
+};
+
+export type TUserPayload = Omit<
+  TUser,
+  "createdAt" | "updatedAt" | "tenant" | "id"
+> & {
+  password: string;
+  tenantId?: string;
 };
 
 export type TCredentials = {

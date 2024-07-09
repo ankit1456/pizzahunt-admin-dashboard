@@ -12,8 +12,6 @@ function useRestaurants() {
     queryFn: getRestaurants,
   });
 
-  console.log(restaurants, isLoading, error, isError);
-
   return {
     restaurants: restaurants?.data,
     isLoading,

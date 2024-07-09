@@ -29,11 +29,11 @@
 }
 
 .ant-dropdown-menu-title-content {
-  font-size: 0.85rem !important;
+  font-size: 14px !important;
 }
 
 .ant-select-dropdown * {
-  font-size: 0.77rem !important;
+  font-size: 12.5px !important;
 }
 
 .link:hover {
@@ -44,10 +44,38 @@
 }
 
 .ant-table table {
-  font-size: 0.78rem;
+  font-size: 13px;
 }
 
 .ant-input-search input {
   padding-block: 5px !important;
   font-size: small !important;
+}
+
+.ant-form-item-control-input input {
+  font-size: small !important;
+}
+
+.add-user-form .ant-form-item-control-input input[id="password"] {
+  padding-block: 2.5px;
+}
+
+.ant-form-item-label {
+  padding: 0 !important;
+  padding-left: 1px !important;
+}
+.ant-form-item-label label {
+  font-size: 12.5px !important;
+}
+
+.ant-select-selection-item {
+  font-size: 12.7px !important;
+}
+
+.user-filters .ant-input-affix-wrapper {
+  padding-block: 0;
+}
+
+.ant-select-selection-placeholder {
+  font-size: 12.5px;
 }

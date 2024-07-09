@@ -1,6 +1,6 @@
 import { Card, Col, Input, Row, Select } from "antd";
 import { PropsWithChildren } from "react";
-import { Roles } from "../../../types/user.types";
+import { Roles } from "../../types/user.types";
 
 type Props = {
   readonly onFilterChange: (filterName: string, filterValue: string) => void;
@@ -14,7 +14,8 @@ function UsersFilter({ onFilterChange, children }: PropsWithChildren<Props>) {
           <Row gutter={20}>
             <Col span={10}>
               <Input.Search
-                className="width-full user-search"
+                allowClear
+                className="width-full"
                 placeholder="search user"
                 onChange={(e) =>
                   onFilterChange("userSearchQuery", e.target.value)
@@ -47,7 +48,7 @@ function UsersFilter({ onFilterChange, children }: PropsWithChildren<Props>) {
                 }
               >
                 <Select.Option value="active">Active</Select.Option>
-                <Select.Option value="inActive">InActive</Select.Option>
+                <Select.Option value="inActive">In Active</Select.Option>
                 <Select.Option value="all">All Users</Select.Option>
               </Select>
             </Col>

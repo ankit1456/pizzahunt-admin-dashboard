@@ -13,21 +13,15 @@ import {
   Space,
 } from "antd";
 import { AxiosError } from "axios";
-import { useState } from "react";
+import { FocusEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogout, useSelf } from "../../hooks";
-import { Logo } from "../../ui";
 import { login } from "../../http/api";
 import { useAuth } from "../../store";
 import { Roles, TCredentials, TUser } from "../../types/user.types";
+import { Logo } from "../../ui";
 import { isAuthorized } from "../../utils";
 import "./login.css";
-
-const handleLogin = async function (credentials: TCredentials) {
-  const { data } = await login(credentials);
-
-  return data;
-};
 
 const validateMessages = {
   required: "Please provide your ${label} ",
@@ -42,14 +36,23 @@ function LoginPage() {
 
   const [form] = Form.useForm();
 
+  const handleFormValidation = (e: FocusEvent<HTMLInputElement>) => {
+    form.validateFields([e.target.id]);
+  };
+
   const { logoutMutate } = useLogout();
 
   const { refetch: refetchSelf } = useSelf(false);
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const {
+    mutate: loginMutate,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
     mutationKey: ["login"],
-    mutationFn: handleLogin,
-    onSuccess: async (user) => {
+    mutationFn: login,
+    onSuccess: async ({ data: user }) => {
       if (user.role === Roles.MANAGER) {
         const { data } = await refetchSelf();
         setUser(data as TUser);
@@ -97,7 +100,7 @@ function LoginPage() {
                 remember: true,
               }}
               onFinish={(values: TCredentials & { remember: boolean }) => {
-                mutate({
+                loginMutate({
                   email: values.email,
                   password: values.password,
                 });
@@ -128,18 +131,14 @@ function LoginPage() {
               >
                 <Input
                   autoFocus={true}
-                  onBlur={() => {
-                    form.validateFields(["email"]);
-                  }}
+                  onBlur={handleFormValidation}
                   prefix={<UserOutlined className="login__input-icon" />}
                   placeholder="Email"
                 />
               </Form.Item>
               <Form.Item name="password" rules={[{ required: true }]}>
                 <Input.Password
-                  onBlur={() => {
-                    form.validateFields(["password"]);
-                  }}
+                  onBlur={handleFormValidation}
                   prefix={<LockOutlined className="login__input-icon" />}
                   placeholder="Password"
                 />

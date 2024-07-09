@@ -1,13 +1,15 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Flex, Form, Table } from "antd";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Breadcrumb, Button, Flex, Form, message, Table } from "antd";
 import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import AddUserDrawer from "../../features/users/AddUserDrawer";
 import AddUserForm from "../../features/users/AddUserForm";
-import UsersFilter from "../../features/users/userFilters/UserFilters";
+import UsersFilter from "../../features/users/UserFilters";
 import { useUsers } from "../../hooks";
-import { TUser } from "../../types/user.types";
+import { createUser } from "../../http/api";
+import { Roles, TUser, TUserPayload } from "../../types/user.types";
 import { Loader } from "../../ui";
 import { formatDate } from "../../utils";
 
@@ -23,7 +25,7 @@ const columns = [
     dataIndex: "firstName",
     key: "name",
     render: (firstName: string, user: TUser) => (
-      <Link to={`/users/${firstName}`}>
+      <Link to={`/users/${user.id}`}>
         {firstName} {user.lastName}
       </Link>
     ),
@@ -48,11 +50,40 @@ const columns = [
 ];
 
 function Users() {
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const queryClient = useQueryClient();
   const { users, isLoading, isError, error } = useUsers();
   const [isAddUserDrawerOpen, setIsAddUserDrawerOpen] = useState(false);
+  const [form] = Form.useForm<TUserPayload>();
+
+  const closeAddUserDrawer = () => setIsAddUserDrawerOpen(false);
+
+  const { mutate: newUserMutate } = useMutation({
+    mutationKey: ["user"],
+    mutationFn: createUser,
+    onSuccess: () => {
+      form.resetFields();
+      closeAddUserDrawer();
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+
+      messageApi.open({
+        type: "success",
+        content: "User created successfully",
+        style: {
+          fontSize: "small",
+        },
+      });
+    },
+  });
+
+  const handleSubmit = (formValues: TUserPayload) => {
+    newUserMutate(formValues);
+  };
 
   return (
     <Flex className="users" vertical gap={10}>
+      {contextHolder}
       <Breadcrumb
         separator={<FaAngleRight style={{ marginBottom: "-2px" }} />}
         style={{ fontSize: ".8rem" }}
@@ -84,11 +115,12 @@ function Users() {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => setIsAddUserDrawerOpen((open) => !open)}
+          onClick={() => setIsAddUserDrawerOpen(true)}
         >
           Add User
         </Button>
       </UsersFilter>
+
       <Table
         rowKey="id"
         dataSource={users}
@@ -98,10 +130,17 @@ function Users() {
 
       <AddUserDrawer
         isAddUserDrawerOpen={isAddUserDrawerOpen}
-        setIsAddUserDrawerOpen={setIsAddUserDrawerOpen}
+        closeAddUserDrawer={closeAddUserDrawer}
+        form={form}
       >
-        <Form layout="vertical">
-          <AddUserForm />
+        <Form<TUserPayload>
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          initialValues={{ role: Roles.MANAGER }}
+        >
+          <AddUserForm form={form} />
+          <button type="submit" style={{ display: "none" }} />
         </Form>
       </AddUserDrawer>
     </Flex>
