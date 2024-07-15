@@ -1,10 +1,10 @@
-const formatDate = function (date: Date) {
+const formatDate = function (date: string, showTime = false) {
   if (!date) return;
 
   return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(date);
+    dateStyle: "medium",
+    timeStyle: showTime ? "short" : undefined,
+  }).format(new Date(date));
 };
 
 export default formatDate;

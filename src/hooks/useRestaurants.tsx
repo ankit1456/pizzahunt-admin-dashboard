@@ -1,20 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getRestaurants } from "../http/api";
+import { TPaginatedQuery } from "../types";
 
-function useRestaurants() {
-  const {
-    data: restaurants,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["restaurants"],
-    queryFn: getRestaurants,
+function useRestaurants(queryParams: TPaginatedQuery) {
+  const { data, isFetching, isError, error } = useQuery({
+    queryKey: ["restaurants", queryParams],
+    queryFn: () => {
+      const queryString = new URLSearchParams(
+        queryParams as unknown as Record<string, string>
+      ).toString();
+      return getRestaurants(queryString);
+    },
+    placeholderData: keepPreviousData,
   });
 
   return {
-    restaurants: restaurants?.data,
-    isLoading,
+    data: data?.data,
+    isFetching,
     error,
     isError,
   };
