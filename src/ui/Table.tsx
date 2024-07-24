@@ -1,6 +1,8 @@
-import { Table as AntTable } from "antd";
+import { Table as AntTable, Typography } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { ColumnsType } from "antd/es/table";
+import { useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { TPaginatedResponse } from "../types";
 
 type Props<T> = {
@@ -16,20 +18,41 @@ function Table<T extends AnyObject>({
   rowKey,
   onPageChange,
 }: Readonly<Props<T>>) {
+  const location = useLocation();
+
+  const showTotal = useCallback(
+    (total: number, range: [number, number]) => (
+      <Typography.Text className="font-12">
+        showing {range[0]}-{range[1]} of {total}{" "}
+        {location.pathname.split("/")[1]}
+      </Typography.Text>
+    ),
+    [location.pathname]
+  );
+
   return (
-    <AntTable<T>
-      pagination={{
-        total: data?.totalCount,
-        pageSize: data?.limit,
-        current: data?.page,
-        onChange: onPageChange,
-        responsive: true,
+    <div
+      style={{
+        height: "100%",
+        overflowY: "auto",
       }}
-      rowKey={rowKey}
-      dataSource={data?.data}
-      columns={columns}
-      scroll={{ x: 700 }}
-    />
+    >
+      <AntTable<T>
+        pagination={{
+          total: data?.totalCount,
+          pageSize: data?.limit,
+          current: data?.page,
+          responsive: true,
+          size: "small",
+          onChange: onPageChange,
+          showTotal: showTotal,
+        }}
+        rowKey={rowKey}
+        dataSource={data?.data}
+        columns={columns}
+        scroll={{ x: 700, y: "calc(100dvh - 360px)" }}
+      />
+    </div>
   );
 }
 

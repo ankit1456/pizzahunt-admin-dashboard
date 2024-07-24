@@ -2,16 +2,16 @@ import { Card, Col, Form, Input, Row } from "antd";
 import { PropsWithChildren } from "react";
 import "./restaurantsFilters.css";
 
-function RestaurantFilters({ children }: PropsWithChildren) {
+function RestaurantFilters({ children }: Readonly<PropsWithChildren>) {
   return (
     <Card className="restaurant-filters">
-      <Row justify="space-between" align="middle">
-        <Col>
-          <Form.Item name="q" style={{ marginBottom: 0 }}>
+      <Row justify="space-between">
+        <Col span={8}>
+          <Form.Item name="q">
             <Input.Search
-              className="restaurant-search"
               allowClear
-              placeholder="search"
+              className="restaurant-search"
+              placeholder="search restaurants"
             />
           </Form.Item>
         </Col>

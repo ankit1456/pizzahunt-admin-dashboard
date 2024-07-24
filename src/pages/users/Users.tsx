@@ -1,86 +1,111 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Breadcrumb, Button, Flex, Form, message, Typography } from "antd";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import AddUserDrawer from "../../features/users/AddUserDrawer";
-import AddUserForm from "../../features/users/AddUserForm";
-import UsersFilter from "../../features/users/UserFilters";
+import { AddUserDrawer, AddUserForm, UserFilters } from "../../features/users";
 import { useUsers } from "../../hooks";
 import { createUser } from "../../http/api";
-import { LIMIT_PER_PAGE } from "../../types";
+import { LIMIT_PER_PAGE, TFilterPayload, TQueryParams } from "../../types";
+import { TTenant } from "../../types/tenant.types";
 import { Roles, TUser, TUserPayload } from "../../types/user.types";
-import { Loader } from "../../ui";
-import Table from "../../ui/Table";
-import { formatDate } from "../../utils";
+import { Loader, Table } from "../../ui";
+import { debounce, formatDate } from "../../utils";
+
+const columns = [
+  {
+    title: "Name",
+    dataIndex: "firstName",
+    key: "name",
+    render: (firstName: string, user: TUser) => (
+      <span style={{ color: "var(--primary-color)" }}>
+        {firstName} {user.lastName}
+      </span>
+    ),
+  },
+
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: "Role",
+    dataIndex: "role",
+    key: "role",
+    width: 130,
+  },
+
+  {
+    title: "Restaurant",
+    dataIndex: "tenant",
+    key: "tenant",
+    render: (tenant: TTenant) => {
+      return tenant ? (
+        <span>
+          {tenant?.name}, {tenant?.address}
+        </span>
+      ) : null;
+    },
+  },
+
+  {
+    title: "Created At",
+    dataIndex: "createdAt",
+    key: "createdAt ",
+    render: (createdAt: string) => formatDate(createdAt),
+    width: 140,
+  },
+];
 
 function Users() {
   const [messageApi, contextHolder] = message.useMessage();
 
   const queryClient = useQueryClient();
-  const [isAddUserDrawerOpen, setIsAddUserDrawerOpen] = useState(false);
-  const [form] = Form.useForm<TUserPayload>();
-
-  const [queryParams, setQueryParams] = useState({
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [queryParams, setQueryParams] = useState<TQueryParams>({
     page: 1,
     limit: LIMIT_PER_PAGE,
   });
+  const [form] = Form.useForm<TUserPayload>();
+  const [userFilterForm] = Form.useForm();
+
   const { data, isFetching, isError, error } = useUsers(queryParams);
 
-  const columns = useMemo(
-    () => [
-      {
-        title: "Sr no",
-        dataIndex: "serialNumber",
-        render: (_: unknown, __: unknown, index: number) => {
-          if (data?.page && data.limit) {
-            return String(index + 1 + (data.page - 1) * data.limit).padStart(
-              2,
-              "0"
-            );
-          }
-        },
-      },
-      {
-        title: "Name",
-        dataIndex: "firstName",
-        key: "name",
-        render: (firstName: string, user: TUser) => (
-          <Link to={`/users/${user.id}`}>
-            {firstName} {user.lastName}
-          </Link>
-        ),
-      },
+  const handleCloseDrawer = () => setIsDrawerOpen(false);
 
-      {
-        title: "Email",
-        dataIndex: "email",
-        key: "email",
-      },
-      {
-        title: "Role",
-        dataIndex: "role",
-        key: "role",
-      },
-      {
-        title: "Created At",
-        dataIndex: "createdAt",
-        key: "createdAt ",
-        render: (createdAt: string) => formatDate(createdAt),
-      },
-    ],
-    [data?.limit, data?.page]
-  );
+  const handlePageChange = (page: number) => {
+    setQueryParams((params) => ({
+      ...params,
+      page,
+    }));
+  };
 
-  const closeAddUserDrawer = () => setIsAddUserDrawerOpen(false);
+  const debouncedSearch = debounce((value: string | undefined) => {
+    setQueryParams((params) => ({ ...params, q: value, page: 1 }));
+  });
+
+  const handleFilterChange = (filterData: TFilterPayload[]) => {
+    const filters = filterData
+      .map((filter) => ({
+        [filter.name[0]]: filter.value,
+      }))
+      .reduce((acc, entry) => ({ ...acc, ...entry }), {});
+
+    if ("q" in filters) {
+      debouncedSearch(filters.q);
+    } else {
+      setQueryParams((params) => ({ ...params, ...filters, page: 1 }));
+    }
+  };
 
   const { mutate: newUserMutate } = useMutation({
     mutationKey: ["user"],
     mutationFn: createUser,
     onSuccess: () => {
       form.resetFields();
-      closeAddUserDrawer();
+      handleCloseDrawer();
       queryClient.invalidateQueries({ queryKey: ["users"] });
 
       messageApi.open({
@@ -97,15 +122,8 @@ function Users() {
     newUserMutate(formValues);
   };
 
-  const handlePageChange = (page: number) => {
-    setQueryParams((queryParams) => ({
-      ...queryParams,
-      page,
-    }));
-  };
-
   return (
-    <Flex className="users" vertical gap={12}>
+    <Flex vertical gap={12}>
       {contextHolder}
 
       <Flex justify="space-between" align="center">
@@ -138,19 +156,23 @@ function Users() {
         </div>
       </Flex>
 
-      <UsersFilter
-        onFilterChange={(filterName, filterValue) => {
-          console.log(filterName, filterValue);
+      <Form
+        form={userFilterForm}
+        initialValues={{
+          role: "",
         }}
+        onFieldsChange={handleFilterChange}
       >
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setIsAddUserDrawerOpen(true)}
-        >
-          Add User
-        </Button>
-      </UsersFilter>
+        <UserFilters>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            Add User
+          </Button>
+        </UserFilters>
+      </Form>
 
       <Table<TUser>
         columns={columns}
@@ -160,15 +182,15 @@ function Users() {
       />
 
       <AddUserDrawer
-        isAddUserDrawerOpen={isAddUserDrawerOpen}
-        closeAddUserDrawer={closeAddUserDrawer}
+        isDrawerOpen={isDrawerOpen}
+        onCloseDrawer={handleCloseDrawer}
         form={form}
       >
         <Form<TUserPayload>
           layout="vertical"
           form={form}
           onFinish={handleSubmit}
-          initialValues={{ role: Roles.MANAGER }}
+          initialValues={{ role: Roles.CUSTOMER }}
         >
           <AddUserForm form={form} />
           <button type="submit" style={{ display: "none" }} />

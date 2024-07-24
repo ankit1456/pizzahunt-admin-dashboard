@@ -4,7 +4,7 @@ import { FaGift, FaUserGroup } from "react-icons/fa6";
 import { IoIosRestaurant } from "react-icons/io";
 import { IoFastFood } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../store";
 import { Roles } from "../../types/user.types";
 import Logo from "../Logo";
@@ -16,11 +16,6 @@ const getMenuItems = (role: string) => {
       key: "/",
       icon: <MdDashboard />,
       label: <NavLink to="/">Home</NavLink>,
-    },
-    {
-      key: "/restaurants",
-      icon: <IoIosRestaurant />,
-      label: <NavLink to="/restaurants">Restaurants</NavLink>,
     },
     {
       key: "/products",
@@ -35,16 +30,24 @@ const getMenuItems = (role: string) => {
   ];
 
   if (role === Roles.ADMIN) {
-    const adminItems = [...baseItems];
-
-    adminItems.splice(1, 0, {
-      key: "/users",
-      icon: <FaUserGroup />,
-      label: <NavLink to="/users">Users</NavLink>,
-    });
+    const adminItems = [
+      ...baseItems.slice(0, 1),
+      {
+        key: "/users",
+        icon: <FaUserGroup />,
+        label: <NavLink to="/users">Users</NavLink>,
+      },
+      {
+        key: "/restaurants",
+        icon: <IoIosRestaurant />,
+        label: <NavLink to="/restaurants">Restaurants</NavLink>,
+      },
+      ...baseItems.slice(1),
+    ];
 
     return adminItems;
   }
+
   return baseItems;
 };
 
@@ -57,6 +60,7 @@ function Sider({ collapsed, setCollapsed }: Props) {
   const { user } = useAuth();
 
   const sideItems = getMenuItems(user?.role as string);
+  const location = useLocation();
 
   return (
     <Layout.Sider
@@ -71,11 +75,13 @@ function Sider({ collapsed, setCollapsed }: Props) {
           padding: "20px 25px",
         }}
       >
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
       </div>
       <Menu
         theme="light"
-        defaultSelectedKeys={["/"]}
+        defaultSelectedKeys={[location.pathname]}
         mode="inline"
         items={sideItems}
       />

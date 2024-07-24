@@ -1,33 +1,49 @@
-import { Button, Drawer, Space } from "antd";
-import { Dispatch, SetStateAction } from "react";
+import { Button, Drawer, FormInstance, Space, theme } from "antd";
+import { PropsWithChildren } from "react";
 
 type Props = {
-  isAddRestaurantDrawerOpen: boolean;
-  setIsAddRestaurantDrawerOpen: Dispatch<SetStateAction<boolean>>;
+  isDrawerOpen: boolean;
+  form: FormInstance;
+  onCloseDrawer: () => void;
 };
+
 function AddRestaurantDrawer({
-  isAddRestaurantDrawerOpen,
-  setIsAddRestaurantDrawerOpen,
-}: Readonly<Props>) {
+  form,
+  isDrawerOpen,
+  onCloseDrawer,
+  children,
+}: Readonly<PropsWithChildren<Props>>) {
+  const {
+    token: { colorBgLayout },
+  } = theme.useToken();
+
   return (
     <Drawer
       title="Add Restaurant"
-      width={720}
+      width={600}
+      styles={{
+        body: { background: colorBgLayout },
+      }}
       destroyOnClose
-      open={isAddRestaurantDrawerOpen}
-      onClose={() => setIsAddRestaurantDrawerOpen((open) => !open)}
+      open={isDrawerOpen}
+      onClose={onCloseDrawer}
       extra={
         <Space>
-          <Button>Cancel</Button>
-          <Button type="primary">Submit</Button>
+          <Button
+            onClick={() => {
+              form.resetFields();
+              onCloseDrawer();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={() => form.submit()} type="primary">
+            Submit
+          </Button>
         </Space>
       }
     >
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima,
-        expedita? Magnam, dolore cum? Provident, tenetur? Porro quidem sint
-        aliquam nihil.
-      </p>
+      {children}
     </Drawer>
   );
 }

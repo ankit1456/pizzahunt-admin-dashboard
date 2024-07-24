@@ -8,7 +8,7 @@ export type TUser = {
   role: Roles;
   createdAt: string;
   updatedAt: string;
-  tenant?: TTenant;
+  tenant: TTenant | null;
 };
 
 export type TUserPayload = Omit<

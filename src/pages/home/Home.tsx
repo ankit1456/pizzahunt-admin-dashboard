@@ -3,9 +3,9 @@ import { useState } from "react";
 import { GiPaperBagFolded } from "react-icons/gi";
 import { IoStatsChart } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import RecentOrders from "../../features/orders/recentOrders/RecentOrders";
-import StatBox from "../../features/stats/stat-box/StatBox";
+import { RecentOrders } from "../../features/orders";
 import { useAuth } from "../../store";
+import { StatBox } from "../../ui";
 import { getGreetings } from "../../utils";
 import "./home.css";
 

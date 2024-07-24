@@ -4,3 +4,5 @@ export type TTenant = {
   address: string;
   createdAt: string;
 };
+
+export type TTenantPayload = Omit<TTenant, "id" | "createdAt">;

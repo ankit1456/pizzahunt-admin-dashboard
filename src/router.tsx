@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import AdminProtected from "./features/authentication/AdminProtected";
+import { AdminProtected } from "./features/authentication";
 import { Dashboard, RootLayout, UnAuthenticatedLayout } from "./layouts";
 import { HomePage, LoginPage, PageNotFound, Restaurants, Users } from "./pages";
 
@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
             path: "users",
             element: (
               <AdminProtected>
-                <Users />,
+                <Users />
               </AdminProtected>
             ),
           },

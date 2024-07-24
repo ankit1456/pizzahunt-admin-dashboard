@@ -1,34 +1,42 @@
-import { Card, Col, Flex, Form, FormInstance, Input, Row, Select } from "antd";
-import { Rule } from "antd/lib/form";
-import { FocusEvent } from "react";
-import useRestaurants from "../../hooks/useRestaurants";
+import {
+  Card,
+  Col,
+  Flex,
+  Form,
+  FormInstance,
+  Row,
+  Select,
+  Typography,
+} from "antd";
+import { FocusEvent, useState } from "react";
+import { useInfiniteRestaurants } from "../../hooks";
+import { LIMIT_PER_SCROLL, TQueryParams } from "../../types";
 import { Roles } from "../../types/user.types";
+import { FormItem, Loader } from "../../ui";
+import { debounce } from "../../utils";
 
-function AddUserForm({ form }: Readonly<{ form: FormInstance }>) {
-  const { restaurants } = useRestaurants();
+type Props = {
+  form: FormInstance;
+};
+
+function AddUserForm({ form }: Readonly<Props>) {
+  const [queryParams, setQueryParams] = useState<TQueryParams>({
+    page: 1,
+    limit: LIMIT_PER_SCROLL,
+  });
+
+  const { data, isFetching, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useInfiniteRestaurants(queryParams);
 
   const handleFormValidation = (e: FocusEvent<HTMLInputElement>) => {
     form.validateFields([e.target.id]);
   };
 
-  const renderFormItem = (
-    label: string,
-    name: string,
-    rules: Rule[],
-    inputType: "text" | "email" | "password" = "text"
-  ) => (
-    <Form.Item
-      label={label}
-      name={name}
-      rules={rules.map((rule) => ({ ...rule, validateTrigger: "onBlur" }))}
-    >
-      {inputType === "password" ? (
-        <Input.Password onBlur={handleFormValidation} />
-      ) : (
-        <Input size="large" type={inputType} onBlur={handleFormValidation} />
-      )}
-    </Form.Item>
-  );
+  const handleDebouncedSearch = debounce((value: string) => {
+    setQueryParams((params) => ({ ...params, q: value }));
+  });
+
+  const selectedRole = Form.useWatch<Roles>("role", form);
 
   return (
     <Row className="add-user-form" gutter={20}>
@@ -37,28 +45,39 @@ function AddUserForm({ form }: Readonly<{ form: FormInstance }>) {
           <Card title="Basic info" bordered={false}>
             <Row gutter={20}>
               <Col span={12}>
-                {renderFormItem("First name", "firstName", [
-                  {
-                    required: true,
-                    message: "Please provide user's first name",
-                  },
-                ])}
+                <FormItem
+                  label="First name"
+                  name="firstName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please provide user's first name",
+                    },
+                  ]}
+                  handleFormValidation={handleFormValidation}
+                />
               </Col>
               <Col span={12}>
-                {renderFormItem("Last name", "lastName", [
-                  {
-                    required: true,
-                    message: "Please provide user's last name",
-                  },
-                ])}
+                <FormItem
+                  label="Last name"
+                  name="lastName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please provide user's last name",
+                    },
+                  ]}
+                  handleFormValidation={handleFormValidation}
+                />
               </Col>
             </Row>
             <Row gutter={20}>
               <Col span={12}>
-                {renderFormItem(
-                  "Email",
-                  "email",
-                  [
+                <FormItem
+                  inputType="email"
+                  label="Email"
+                  name="email"
+                  rules={[
                     {
                       required: true,
                       message: "Please provide user's email",
@@ -67,15 +86,16 @@ function AddUserForm({ form }: Readonly<{ form: FormInstance }>) {
                       type: "email",
                       message: "Please provide a valid email",
                     },
-                  ],
-                  "email"
-                )}
+                  ]}
+                  handleFormValidation={handleFormValidation}
+                />
               </Col>
               <Col span={12}>
-                {renderFormItem(
-                  "Password",
-                  "password",
-                  [
+                <FormItem
+                  inputType="password"
+                  label="Password"
+                  name="password"
+                  rules={[
                     {
                       required: true,
                       message: "Please provide user's password",
@@ -84,9 +104,9 @@ function AddUserForm({ form }: Readonly<{ form: FormInstance }>) {
                       min: 8,
                       message: "Password must contain 8 characters",
                     },
-                  ],
-                  "password"
-                )}
+                  ]}
+                  handleFormValidation={handleFormValidation}
+                />
               </Col>
             </Row>
           </Card>
@@ -96,9 +116,10 @@ function AddUserForm({ form }: Readonly<{ form: FormInstance }>) {
               <Col span={12}>
                 <Form.Item label="Role" name="role">
                   <Select
+                    id="select-role"
                     allowClear
                     className="width-full"
-                    placeholder="Assign role"
+                    placeholder="assign role"
                   >
                     <Select.Option value={Roles.CUSTOMER}>
                       Customer
@@ -108,21 +129,69 @@ function AddUserForm({ form }: Readonly<{ form: FormInstance }>) {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={12}>
-                <Form.Item label="Restaurant" name="tenantId">
-                  <Select
-                    allowClear
-                    className="width-full"
-                    placeholder="Assign restaurant"
-                  >
-                    {restaurants?.map((rest) => (
-                      <Select.Option key={rest.id} value={rest.id}>
-                        {rest.name}, {rest.address}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
+
+              {selectedRole === Roles.MANAGER && (
+                <Col span={12}>
+                  <Form.Item label="Restaurant" name="tenantId">
+                    <Select
+                      allowClear
+                      className="width-full"
+                      placeholder="assign restaurant"
+                      listHeight={192}
+                      showSearch
+                      filterOption={false}
+                      loading={isFetching}
+                      onPopupScroll={(e) => {
+                        const target = e.target as HTMLElement;
+                        if (
+                          target.scrollTop + target.offsetHeight ===
+                            target.scrollHeight &&
+                          hasNextPage &&
+                          !isFetching &&
+                          !isFetchingNextPage
+                        ) {
+                          fetchNextPage();
+                        }
+                      }}
+                      notFoundContent={
+                        isFetching && isFetchingNextPage ? (
+                          <Loader />
+                        ) : (
+                          <Typography.Text style={{ padding: "10px" }}>
+                            no restaurant found
+                          </Typography.Text>
+                        )
+                      }
+                      onSearch={handleDebouncedSearch}
+                    >
+                      {data?.map((page) =>
+                        page.data.data.map((restaurant) => (
+                          <Select.Option
+                            value={restaurant.id}
+                            key={restaurant.id}
+                          >
+                            {restaurant.name}, {restaurant.address}
+                          </Select.Option>
+                        ))
+                      )}
+
+                      {hasNextPage && (
+                        <Select.Option
+                          style={{ pointerEvents: "none" }}
+                          value=""
+                          disabled
+                        >
+                          {isFetchingNextPage && (
+                            <Flex align="center" justify="center">
+                              <Loader />
+                            </Flex>
+                          )}
+                        </Select.Option>
+                      )}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
           </Card>
         </Flex>

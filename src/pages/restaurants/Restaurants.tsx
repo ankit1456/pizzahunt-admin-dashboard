@@ -1,60 +1,60 @@
-import { Breadcrumb, Button, Flex, Typography } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Breadcrumb, Button, Flex, Form, message, Typography } from "antd";
+import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import RestaurantFilters from "../../features/restaurants/restaurantFilters/restaurantFilters";
-import useRestaurants from "../../hooks/useRestaurants";
-import { Loader } from "../../ui";
-import { formatDate } from "../../utils";
-import { TTenant } from "../../types/tenant.types";
-import { PlusOutlined } from "@ant-design/icons";
-import { useState } from "react";
-import AddRestaurant from "../../features/restaurants/AddRestaurantDrawer";
-import { LIMIT_PER_PAGE } from "../../types";
-import Table from "../../ui/Table";
+import {
+  AddRestaurantDrawer,
+  AddRestaurantForm,
+  RestaurantFilters,
+} from "../../features/restaurants";
+import { useRestaurants } from "../../hooks";
+import { createRestaurant } from "../../http/api";
+import { LIMIT_PER_PAGE, TFilterPayload, TQueryParams } from "../../types";
+import { TTenant, TTenantPayload } from "../../types/tenant.types";
+import { Loader, Table } from "../../ui";
+import { debounce, formatDate } from "../../utils";
+
+const columns = [
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+    render: (name: string) => (
+      <span style={{ color: "var(--primary-color)" }}>{name}</span>
+    ),
+  },
+
+  {
+    title: "Address",
+    dataIndex: "address",
+    key: "address",
+  },
+  {
+    title: "Created At",
+    dataIndex: "createdAt",
+    key: "createdAt ",
+    render: (createdAt: string) => formatDate(createdAt),
+  },
+];
 
 function Restaurants() {
-  const [queryParams, setQueryParams] = useState({
+  const [messageApi, contextHolder] = message.useMessage();
+  const queryClient = useQueryClient();
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [queryParams, setQueryParams] = useState<TQueryParams>({
     page: 1,
     limit: LIMIT_PER_PAGE,
   });
+
+  const [form] = Form.useForm<TTenantPayload>();
+  const [restaurantFilterForm] = Form.useForm();
+
   const { data, isFetching, isError, error } = useRestaurants(queryParams);
-  const [isAddRestaurantDrawerOpen, setIsAddRestaurantDrawerOpen] =
-    useState(false);
 
-  const columns = [
-    {
-      title: "Sr no",
-      dataIndex: "serialNumber",
-      render: (_: unknown, __: unknown, index: number) => {
-        if (data?.page && data.limit) {
-          return String(index + 1 + (data.page - 1) * data.limit).padStart(
-            2,
-            "0"
-          );
-        }
-      },
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (name: string, restaurant: TTenant) => (
-        <Link to={`/restaurants/${restaurant.id}`}>{name}</Link>
-      ),
-    },
-
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt ",
-      render: (createdAt: string) => formatDate(createdAt),
-    },
-  ];
+  const handleCloseDrawer = () => setIsDrawerOpen(false);
 
   const handlePageChange = (page: number) => {
     setQueryParams((queryParams) => ({
@@ -63,8 +63,38 @@ function Restaurants() {
     }));
   };
 
+  const handleDebouncedSearch = debounce((filterData: TFilterPayload[]) => {
+    const q = filterData[0].value;
+    setQueryParams((params) => ({ ...params, q, page: 1 }));
+  });
+
+  const { mutate: newRestaurantMutate } = useMutation({
+    mutationKey: ["restaurant"],
+    mutationFn: createRestaurant,
+    onSuccess: () => {
+      form.resetFields();
+      handleCloseDrawer();
+
+      queryClient.invalidateQueries({
+        queryKey: ["restaurants"],
+      });
+      messageApi.open({
+        type: "success",
+        content: "Restaurant created successfully",
+        style: {
+          fontSize: "small",
+        },
+      });
+    },
+  });
+
+  const handleSubmit = (formValues: TTenantPayload) => {
+    newRestaurantMutate(formValues);
+  };
+
   return (
-    <Flex className="users" vertical gap={12}>
+    <Flex vertical gap={12}>
+      {contextHolder}
       <Flex justify="space-between" align="center">
         <Breadcrumb
           separator={<FaAngleRight style={{ marginBottom: "-2px" }} />}
@@ -95,15 +125,17 @@ function Restaurants() {
         </div>
       </Flex>
 
-      <RestaurantFilters>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setIsAddRestaurantDrawerOpen((open) => !open)}
-        >
-          Add Restaurant
-        </Button>
-      </RestaurantFilters>
+      <Form form={restaurantFilterForm} onFieldsChange={handleDebouncedSearch}>
+        <RestaurantFilters>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            Add Restaurant
+          </Button>
+        </RestaurantFilters>
+      </Form>
 
       <Table<TTenant>
         columns={columns}
@@ -111,11 +143,20 @@ function Restaurants() {
         onPageChange={handlePageChange}
         rowKey="id"
       />
-
-      <AddRestaurant
-        isAddRestaurantDrawerOpen={isAddRestaurantDrawerOpen}
-        setIsAddRestaurantDrawerOpen={setIsAddRestaurantDrawerOpen}
-      />
+      <AddRestaurantDrawer
+        isDrawerOpen={isDrawerOpen}
+        onCloseDrawer={handleCloseDrawer}
+        form={form}
+      >
+        <Form<TTenantPayload>
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+        >
+          <AddRestaurantForm form={form} />
+          <button type="submit" style={{ display: "none" }} />
+        </Form>
+      </AddRestaurantDrawer>
     </Flex>
   );
 }

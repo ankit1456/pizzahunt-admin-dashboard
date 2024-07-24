@@ -44,9 +44,17 @@
 }
 
 .ant-table table {
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
+.ant-table-pagination {
+  gap: 5px;
+}
+
+.ant-pagination {
+  margin: 12px 0 !important;
+  margin-right: 20px !important;
+}
 .ant-input-search input {
   padding-block: 5px !important;
   font-size: small !important;
@@ -74,6 +82,11 @@
 
 .user-filters .ant-input-affix-wrapper {
   padding-block: 0;
+}
+
+.user-filters .ant-form-item,
+.restaurant-filters .ant-form-item {
+  margin-bottom: 0;
 }
 
 .ant-select-selection-placeholder {

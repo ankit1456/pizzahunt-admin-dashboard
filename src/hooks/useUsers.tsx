@@ -1,14 +1,13 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getUsers } from "../http/api";
-import { TPaginatedQuery } from "../types";
+import { TQueryParams } from "../types";
+import { getQueryString } from "../utils";
 
-function useUsers(queryParams: TPaginatedQuery) {
+function useUsers(queryParams: TQueryParams) {
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ["users", queryParams],
     queryFn: () => {
-      const queryString = new URLSearchParams(
-        queryParams as unknown as Record<string, string>
-      ).toString();
+      const queryString = getQueryString(queryParams);
       return getUsers(queryString);
     },
     placeholderData: keepPreviousData,

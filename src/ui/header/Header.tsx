@@ -49,7 +49,7 @@ function Header({ collapsed }: Props) {
               items: [
                 {
                   key: "logout",
-                  label: "Logout",
+                  label: "logout",
                   onClick: () => logoutMutate(),
                 },
               ],
