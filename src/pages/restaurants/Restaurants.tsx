@@ -15,8 +15,9 @@ import { LIMIT_PER_PAGE, TFilterPayload, TQueryParams } from "../../types";
 import { TTenant, TTenantPayload } from "../../types/tenant.types";
 import { Loader, Table } from "../../ui";
 import { debounce, formatDate } from "../../utils";
+import { ColumnsType } from "antd/lib/table";
 
-const columns = [
+const columns: ColumnsType<TTenant> = [
   {
     title: "Name",
     dataIndex: "name",
@@ -143,6 +144,7 @@ function Restaurants() {
         onPageChange={handlePageChange}
         rowKey="id"
       />
+
       <AddRestaurantDrawer
         isDrawerOpen={isDrawerOpen}
         onCloseDrawer={handleCloseDrawer}

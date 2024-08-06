@@ -17,5 +17,5 @@ export type TFilterPayload = {
   value?: string;
 };
 
-export const LIMIT_PER_PAGE = 8;
+export const LIMIT_PER_PAGE = 6;
 export const LIMIT_PER_SCROLL = 6;

@@ -14,6 +14,8 @@ export const getUsers = (queryString: string) =>
   api.get<TPaginatedResponse<TUser>>(`/users?${queryString}`);
 export const createUser = (user: TUserPayload) =>
   api.post<TUser>("/users", user);
+export const updateUser = (userId: string, user: TUserPayload) =>
+  api.patch<TUser>(`/users/${userId}`, user);
 
 // tenants
 export const getRestaurants = (queryString: string) =>

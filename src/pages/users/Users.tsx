@@ -1,19 +1,21 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Breadcrumb, Button, Flex, Form, message, Typography } from "antd";
-import { useState } from "react";
+import { Breadcrumb, Button, Flex, Form, Typography } from "antd";
+import { ColumnsType } from "antd/lib/table";
+import { useEffect, useState } from "react";
 import { FaAngleRight } from "react-icons/fa6";
+import { MdEdit } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { AddUserDrawer, AddUserForm, UserFilters } from "../../features/users";
 import { useUsers } from "../../hooks";
-import { createUser } from "../../http/api";
+import useCreateUser from "../../hooks/useCreateUser";
+import useEditUser from "../../hooks/useEditUser";
 import { LIMIT_PER_PAGE, TFilterPayload, TQueryParams } from "../../types";
 import { TTenant } from "../../types/tenant.types";
 import { Roles, TUser, TUserPayload } from "../../types/user.types";
 import { Loader, Table } from "../../ui";
 import { debounce, formatDate } from "../../utils";
 
-const columns = [
+const columns: ColumnsType<TUser> = [
   {
     title: "Name",
     dataIndex: "firstName",
@@ -60,20 +62,37 @@ const columns = [
 ];
 
 function Users() {
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const queryClient = useQueryClient();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [queryParams, setQueryParams] = useState<TQueryParams>({
     page: 1,
     limit: LIMIT_PER_PAGE,
   });
+  const [userToEdit, setUserToEdit] = useState<TUser | null>(null);
+
   const [form] = Form.useForm<TUserPayload>();
   const [userFilterForm] = Form.useForm();
 
   const { data, isFetching, isError, error } = useUsers(queryParams);
+  const { createContextHolder, newUserMutate } =
+    useCreateUser(handleFormSuccess);
+  const { editContextHolder, editUserMutate } = useEditUser(
+    userToEdit,
+    handleFormSuccess
+  );
 
-  const handleCloseDrawer = () => setIsDrawerOpen(false);
+  const isEditMode = !!userToEdit;
+
+  useEffect(() => {
+    if (userToEdit) {
+      form.setFieldsValue({ ...userToEdit, tenantId: userToEdit.tenant?.id });
+      setIsDrawerOpen(true);
+    }
+  }, [userToEdit, form]);
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setUserToEdit(null);
+  };
 
   const handlePageChange = (page: number) => {
     setQueryParams((params) => ({
@@ -100,31 +119,21 @@ function Users() {
     }
   };
 
-  const { mutate: newUserMutate } = useMutation({
-    mutationKey: ["user"],
-    mutationFn: createUser,
-    onSuccess: () => {
-      form.resetFields();
-      handleCloseDrawer();
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+  function handleFormSuccess() {
+    form.resetFields();
+    handleCloseDrawer();
+    setUserToEdit(null);
+  }
 
-      messageApi.open({
-        type: "success",
-        content: "User created successfully",
-        style: {
-          fontSize: "small",
-        },
-      });
-    },
-  });
-
-  const handleSubmit = (formValues: TUserPayload) => {
-    newUserMutate(formValues);
-  };
+  function handleSubmit(formValues: TUserPayload) {
+    if (isEditMode) editUserMutate(formValues);
+    else newUserMutate(formValues);
+  }
 
   return (
     <Flex vertical gap={12}>
-      {contextHolder}
+      {createContextHolder}
+      {editContextHolder}
 
       <Flex justify="space-between" align="center">
         <Breadcrumb
@@ -175,7 +184,20 @@ function Users() {
       </Form>
 
       <Table<TUser>
-        columns={columns}
+        columns={[
+          ...columns,
+          {
+            title: "Actions",
+            fixed: "right",
+            render: (_: string, user: TUser) => {
+              return (
+                <Button type="link" onClick={() => setUserToEdit(user)}>
+                  <MdEdit size={18} />
+                </Button>
+              );
+            },
+          },
+        ]}
         data={data}
         onPageChange={handlePageChange}
         rowKey="id"
@@ -185,6 +207,7 @@ function Users() {
         isDrawerOpen={isDrawerOpen}
         onCloseDrawer={handleCloseDrawer}
         form={form}
+        isEditMode={isEditMode}
       >
         <Form<TUserPayload>
           layout="vertical"
@@ -192,7 +215,7 @@ function Users() {
           onFinish={handleSubmit}
           initialValues={{ role: Roles.CUSTOMER }}
         >
-          <AddUserForm form={form} />
+          <AddUserForm form={form} isEditMode={isEditMode} />
           <button type="submit" style={{ display: "none" }} />
         </Form>
       </AddUserDrawer>

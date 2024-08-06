@@ -1,12 +1,21 @@
 .sider {
-  .ant-menu-item-active:hover {
+  .ant-menu-item-active:hover,
+  .ant-menu-item-active:hover .ant-menu-item-icon,
+  .ant-menu-item-selected {
     color: var(--primary-color) !important;
   }
+
   .ant-menu-item-icon {
     font-size: larger !important;
+    color: var(--color-gray-dark) !important;
   }
+
   .ant-menu-item {
     gap: 7px;
+  }
+
+  .ant-menu-item-selected svg {
+    color: var(--primary-color) !important;
   }
 
   .ant-menu-title-content {

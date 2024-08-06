@@ -2,13 +2,15 @@ import { Button, Drawer, FormInstance, Space, theme } from "antd";
 import { PropsWithChildren } from "react";
 
 type Props = {
-  isDrawerOpen: boolean;
   form: FormInstance;
+  isDrawerOpen: boolean;
+  isEditMode: boolean;
   onCloseDrawer: () => void;
 };
 function AddUserDrawer({
   form,
   isDrawerOpen,
+  isEditMode,
   onCloseDrawer,
   children,
 }: PropsWithChildren<Props>) {
@@ -22,7 +24,7 @@ function AddUserDrawer({
         body: { background: colorBgLayout },
       }}
       size="large"
-      title="Add User"
+      title={isEditMode ? "Edit User" : "Add User"}
       destroyOnClose
       open={isDrawerOpen}
       onClose={onCloseDrawer}

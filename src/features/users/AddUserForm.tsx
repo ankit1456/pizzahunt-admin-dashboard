@@ -1,13 +1,4 @@
-import {
-  Card,
-  Col,
-  Flex,
-  Form,
-  FormInstance,
-  Row,
-  Select,
-  Typography,
-} from "antd";
+import { Card, Col, Flex, Form, FormInstance, Row, Select } from "antd";
 import { FocusEvent, useState } from "react";
 import { useInfiniteRestaurants } from "../../hooks";
 import { LIMIT_PER_SCROLL, TQueryParams } from "../../types";
@@ -17,12 +8,14 @@ import { debounce } from "../../utils";
 
 type Props = {
   form: FormInstance;
+  isEditMode: boolean;
 };
 
-function AddUserForm({ form }: Readonly<Props>) {
+function AddUserForm({ form, isEditMode = false }: Readonly<Props>) {
   const [queryParams, setQueryParams] = useState<TQueryParams>({
     page: 1,
     limit: LIMIT_PER_SCROLL,
+    q: "",
   });
 
   const { data, isFetching, hasNextPage, fetchNextPage, isFetchingNextPage } =
@@ -90,24 +83,26 @@ function AddUserForm({ form }: Readonly<Props>) {
                   handleFormValidation={handleFormValidation}
                 />
               </Col>
-              <Col span={12}>
-                <FormItem
-                  inputType="password"
-                  label="Password"
-                  name="password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please provide user's password",
-                    },
-                    {
-                      min: 8,
-                      message: "Password must contain 8 characters",
-                    },
-                  ]}
-                  handleFormValidation={handleFormValidation}
-                />
-              </Col>
+              {!isEditMode && (
+                <Col span={12}>
+                  <FormItem
+                    inputType="password"
+                    label="Password"
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please provide user's password",
+                      },
+                      {
+                        min: 8,
+                        message: "Password must contain 8 characters",
+                      },
+                    ]}
+                    handleFormValidation={handleFormValidation}
+                  />
+                </Col>
+              )}
             </Row>
           </Card>
 
@@ -153,15 +148,6 @@ function AddUserForm({ form }: Readonly<Props>) {
                           fetchNextPage();
                         }
                       }}
-                      notFoundContent={
-                        isFetching && isFetchingNextPage ? (
-                          <Loader />
-                        ) : (
-                          <Typography.Text style={{ padding: "10px" }}>
-                            no restaurant found
-                          </Typography.Text>
-                        )
-                      }
                       onSearch={handleDebouncedSearch}
                     >
                       {data?.map((page) =>
