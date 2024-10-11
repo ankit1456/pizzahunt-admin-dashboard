@@ -4,7 +4,7 @@ import { TUser } from "./types/user.types";
 
 type TAuthState = {
   user: TUser | null;
-  setUser: (user: TUser) => void;
+  setUser: (user: TUser | null) => void;
   logoutFromStore: () => void;
 };
 

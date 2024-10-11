@@ -1,4 +1,5 @@
 export type TPaginatedResponse<T> = {
+  status: EResponseStatus.SUCCESS;
   page: number;
   limit: number;
   totalCount: number;
@@ -17,5 +18,11 @@ export type TFilterPayload = {
   value?: string;
 };
 
-export const LIMIT_PER_PAGE = 6;
+export const LIMIT_PER_PAGE = 8;
 export const LIMIT_PER_SCROLL = 6;
+
+export const enum EResponseStatus {
+  SUCCESS = "success",
+  FAIL = "fail",
+  ERROR = "error",
+}

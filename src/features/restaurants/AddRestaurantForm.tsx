@@ -1,12 +1,10 @@
-import { Card, Col, FormInstance, Row } from "antd";
+import { Card, Col, Form, Row } from "antd";
 import { FocusEvent } from "react";
 import { FormItem } from "../../ui";
 
-type Props = {
-  form: FormInstance;
-};
+function AddRestaurantForm() {
+  const form = Form.useFormInstance();
 
-function AddRestaurantForm({ form }: Readonly<Props>) {
   const handleFormValidation = (e: FocusEvent<HTMLInputElement>) => {
     form.validateFields([e.target.id]);
   };

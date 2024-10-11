@@ -6,3 +6,5 @@ export { default as Sider } from "./sider/Sider";
 export { default as StatBox } from "./stat-box/StatBox";
 export { default as Table } from "./Table";
 export { default as FormItem } from "./FormItem";
+export { default as ErrorAlert } from "./ErrorAlert";
+export { default as Breadcrumb } from "./Breadcrumb";

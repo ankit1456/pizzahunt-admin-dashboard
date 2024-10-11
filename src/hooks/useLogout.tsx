@@ -8,9 +8,7 @@ export default function useLogout() {
   const { mutate: logoutMutate } = useMutation({
     mutationKey: ["logout"],
     mutationFn: logout,
-    onSuccess: () => {
-      logoutFromStore();
-    },
+    onSuccess: () => logoutFromStore(),
   });
 
   return { logoutMutate };

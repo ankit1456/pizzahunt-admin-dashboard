@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
+import { MessageInstance } from "antd/lib/message/interface";
 import { createUser } from "../http/api";
 
-function useCreateUser(successHandler?: () => void) {
-  const [messageApi, contextHolder] = message.useMessage();
+function useCreateUser(
+  successHandler?: () => void,
+  messageApi?: MessageInstance
+) {
   const queryClient = useQueryClient();
 
   const { mutate: newUserMutate } = useMutation({
@@ -13,7 +15,7 @@ function useCreateUser(successHandler?: () => void) {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       successHandler?.();
 
-      messageApi.open({
+      messageApi?.open({
         type: "success",
         content: "User created successfully",
         style: {
@@ -23,7 +25,7 @@ function useCreateUser(successHandler?: () => void) {
     },
   });
 
-  return { createContextHolder: contextHolder, newUserMutate };
+  return { newUserMutate };
 }
 
 export default useCreateUser;

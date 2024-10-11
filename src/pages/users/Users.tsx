@@ -1,19 +1,17 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Flex, Form, Typography } from "antd";
+import { Button, Flex, Form, message, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { useEffect, useState } from "react";
-import { FaAngleRight } from "react-icons/fa6";
+import { AxiosError } from "axios";
+import { useMemo, useState } from "react";
 import { MdEdit } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { AddUserDrawer, AddUserForm, UserFilters } from "../../features/users";
-import { useUsers } from "../../hooks";
-import useCreateUser from "../../hooks/useCreateUser";
-import useEditUser from "../../hooks/useEditUser";
-import { LIMIT_PER_PAGE, TFilterPayload, TQueryParams } from "../../types";
+import { useCreateUser, useEditUser, useUsers } from "../../hooks";
+import { LIMIT_PER_PAGE, TQueryParams } from "../../types";
 import { TTenant } from "../../types/tenant.types";
 import { Roles, TUser, TUserPayload } from "../../types/user.types";
-import { Loader, Table } from "../../ui";
-import { debounce, formatDate } from "../../utils";
+import { Breadcrumb, Loader, Table } from "../../ui";
+import { formatDate } from "../../utils";
 
 const columns: ColumnsType<TUser> = [
   {
@@ -25,6 +23,7 @@ const columns: ColumnsType<TUser> = [
         {firstName} {user.lastName}
       </span>
     ),
+    width: 190,
   },
 
   {
@@ -36,7 +35,7 @@ const columns: ColumnsType<TUser> = [
     title: "Role",
     dataIndex: "role",
     key: "role",
-    width: 130,
+    width: 100,
   },
 
   {
@@ -57,37 +56,40 @@ const columns: ColumnsType<TUser> = [
     dataIndex: "createdAt",
     key: "createdAt ",
     render: (createdAt: string) => formatDate(createdAt),
-    width: 140,
+    width: 120,
   },
 ];
 
 function Users() {
+  const [messageApi, contextHolder] = message.useMessage();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [queryParams, setQueryParams] = useState<TQueryParams>({
-    page: 1,
-    limit: LIMIT_PER_PAGE,
-  });
   const [userToEdit, setUserToEdit] = useState<TUser | null>(null);
 
+  const [queryParams, setQueryParams] = useState<TQueryParams>({
+    page: Number(searchParams.get("page")) || 1,
+    limit: LIMIT_PER_PAGE,
+    role: searchParams.get("role") ?? "",
+  });
+
   const [form] = Form.useForm<TUserPayload>();
-  const [userFilterForm] = Form.useForm();
 
   const { data, isFetching, isError, error } = useUsers(queryParams);
-  const { createContextHolder, newUserMutate } =
-    useCreateUser(handleFormSuccess);
-  const { editContextHolder, editUserMutate } = useEditUser(
+  const { newUserMutate } = useCreateUser(handleFormSuccess, messageApi);
+  const { editUserMutate } = useEditUser(
     userToEdit,
-    handleFormSuccess
+    handleFormSuccess,
+    messageApi
   );
 
   const isEditMode = !!userToEdit;
 
-  useEffect(() => {
-    if (userToEdit) {
-      form.setFieldsValue({ ...userToEdit, tenantId: userToEdit.tenant?.id });
-      setIsDrawerOpen(true);
-    }
-  }, [userToEdit, form]);
+  const handleEditUser = (user: TUser) => {
+    setUserToEdit(user);
+    form.setFieldsValue({ ...user, tenantId: user.tenant?.id });
+    setIsDrawerOpen(true);
+  };
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
@@ -95,34 +97,18 @@ function Users() {
   };
 
   const handlePageChange = (page: number) => {
+    searchParams.set("page", String(page));
+    setSearchParams(searchParams);
+
     setQueryParams((params) => ({
       ...params,
       page,
     }));
   };
 
-  const debouncedSearch = debounce((value: string | undefined) => {
-    setQueryParams((params) => ({ ...params, q: value, page: 1 }));
-  });
-
-  const handleFilterChange = (filterData: TFilterPayload[]) => {
-    const filters = filterData
-      .map((filter) => ({
-        [filter.name[0]]: filter.value,
-      }))
-      .reduce((acc, entry) => ({ ...acc, ...entry }), {});
-
-    if ("q" in filters) {
-      debouncedSearch(filters.q);
-    } else {
-      setQueryParams((params) => ({ ...params, ...filters, page: 1 }));
-    }
-  };
-
   function handleFormSuccess() {
     form.resetFields();
     handleCloseDrawer();
-    setUserToEdit(null);
   }
 
   function handleSubmit(formValues: TUserPayload) {
@@ -130,72 +116,62 @@ function Users() {
     else newUserMutate(formValues);
   }
 
+  const errorMessage = useMemo(() => {
+    if (error instanceof AxiosError)
+      return error.response?.data.message ?? error.code === "ERR_NETWORK"
+        ? "Having trouble reaching the internet. Please try again later"
+        : error.message;
+
+    return "";
+  }, [error]);
+
   return (
     <Flex vertical gap={12}>
-      {createContextHolder}
-      {editContextHolder}
+      {contextHolder}
 
       <Flex justify="space-between" align="center">
         <Breadcrumb
-          separator={<FaAngleRight style={{ marginBottom: "-2px" }} />}
-          style={{ fontSize: ".8rem" }}
           items={[
             {
-              title: (
-                <Link className="link" to="/">
-                  Dashboard
-                </Link>
-              ),
-            },
-            {
-              title: (
-                <Link className="link" to="/users">
-                  Users
-                </Link>
-              ),
+              label: "Users",
+              to: "/users",
             },
           ]}
         />
 
         <div style={{ marginRight: "10px" }}>
           {isFetching && <Loader size={22} />}
-          {isError && (
-            <Typography.Text type="danger">{error?.message}</Typography.Text>
+          {isError && !isFetching && (
+            <Typography.Text className="font-12" type="danger">
+              {errorMessage}
+            </Typography.Text>
           )}
         </div>
       </Flex>
 
-      <Form
-        form={userFilterForm}
-        initialValues={{
-          role: "",
-        }}
-        onFieldsChange={handleFilterChange}
-      >
-        <UserFilters>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setIsDrawerOpen(true)}
-          >
-            Add User
-          </Button>
-        </UserFilters>
-      </Form>
+      <UserFilters setQueryParams={setQueryParams}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setIsDrawerOpen(true)}
+        >
+          Add User
+        </Button>
+      </UserFilters>
 
       <Table<TUser>
         columns={[
           ...columns,
           {
             title: "Actions",
-            fixed: "right",
             render: (_: string, user: TUser) => {
               return (
-                <Button type="link" onClick={() => setUserToEdit(user)}>
+                <Button type="link" onClick={() => handleEditUser(user)}>
                   <MdEdit size={18} />
                 </Button>
               );
             },
+            width: 120,
           },
         ]}
         data={data}
@@ -204,9 +180,9 @@ function Users() {
       />
 
       <AddUserDrawer
+        form={form}
         isDrawerOpen={isDrawerOpen}
         onCloseDrawer={handleCloseDrawer}
-        form={form}
         isEditMode={isEditMode}
       >
         <Form<TUserPayload>
@@ -215,7 +191,7 @@ function Users() {
           onFinish={handleSubmit}
           initialValues={{ role: Roles.CUSTOMER }}
         >
-          <AddUserForm form={form} isEditMode={isEditMode} />
+          <AddUserForm isEditMode={isEditMode} editUserId={userToEdit?.id} />
           <button type="submit" style={{ display: "none" }} />
         </Form>
       </AddUserDrawer>

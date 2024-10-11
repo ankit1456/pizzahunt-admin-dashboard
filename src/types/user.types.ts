@@ -24,6 +24,11 @@ export type TCredentials = {
   password: string;
 };
 
+export type TAuthResponse = {
+  status: string;
+  user: TUser;
+};
+
 export const enum Roles {
   ADMIN = "admin",
   MANAGER = "manager",

@@ -46,6 +46,7 @@ function Table<T extends AnyObject>({
           size: "small",
           onChange: onPageChange,
           showTotal: showTotal,
+          hideOnSinglePage: true,
         }}
         rowKey={rowKey}
         dataSource={data?.data}

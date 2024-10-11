@@ -2,14 +2,16 @@ import { Button, Drawer, FormInstance, Space, theme } from "antd";
 import { PropsWithChildren } from "react";
 
 type Props = {
-  isDrawerOpen: boolean;
   form: FormInstance;
+  isDrawerOpen: boolean;
+  isEditMode: boolean;
   onCloseDrawer: () => void;
 };
 
 function AddRestaurantDrawer({
   form,
   isDrawerOpen,
+  isEditMode,
   onCloseDrawer,
   children,
 }: Readonly<PropsWithChildren<Props>>) {
@@ -19,7 +21,7 @@ function AddRestaurantDrawer({
 
   return (
     <Drawer
-      title="Add Restaurant"
+      title={isEditMode ? "Edit Restaurant" : "Add Restaurant"}
       width={600}
       styles={{
         body: { background: colorBgLayout },

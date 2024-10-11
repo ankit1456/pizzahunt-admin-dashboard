@@ -6,9 +6,7 @@ import { Roles } from "../../types/user.types";
 function AdminProtected({ children }: Readonly<PropsWithChildren>) {
   const { user } = useAuth();
 
-  if (user?.role !== Roles.ADMIN) return <Navigate to="/" replace />;
-
-  return children;
+  return user?.role !== Roles.ADMIN ? <Navigate to="/" replace /> : children;
 }
 
 export default AdminProtected;

@@ -8,11 +8,7 @@ const getSelf = async () => {
 };
 
 export default function useSelf(enabled = true) {
-  const {
-    data: user,
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["self"],
     queryFn: getSelf,
     enabled,
@@ -28,5 +24,5 @@ export default function useSelf(enabled = true) {
     },
   });
 
-  return { user, isLoading, refetch };
+  return { data, isLoading, refetch };
 }

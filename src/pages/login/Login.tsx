@@ -1,7 +1,6 @@
 import { LockFilled, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import {
-  Alert,
   Button,
   Card,
   Checkbox,
@@ -13,13 +12,13 @@ import {
   Space,
 } from "antd";
 import { AxiosError } from "axios";
-import { FocusEvent, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogout, useSelf } from "../../hooks";
 import { login } from "../../http/api";
 import { useAuth } from "../../store";
-import { Roles, TCredentials, TUser } from "../../types/user.types";
-import { Logo } from "../../ui";
+import { Roles, TAuthResponse, TCredentials } from "../../types/user.types";
+import { ErrorAlert, Logo } from "../../ui";
 import { isAuthorized } from "../../utils";
 import "./login.css";
 
@@ -33,49 +32,64 @@ const validateMessages = {
 function LoginPage() {
   const { setUser } = useAuth();
   const [nonAdminError, setNonAdminError] = useState("");
-
   const [form] = Form.useForm();
 
-  const handleFormValidation = (e: FocusEvent<HTMLInputElement>) => {
-    form.validateFields([e.target.id]);
-  };
-
   const { logoutMutate } = useLogout();
-
   const { refetch: refetchSelf } = useSelf(false);
+
+  const handleFormValidation = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      form.validateFields([e.target.id]);
+    },
+    [form]
+  );
+
+  const handleLoginSuccess = async ({
+    data: { user: loggedInUser },
+  }: {
+    data: TAuthResponse;
+  }) => {
+    if (!isAuthorized(loggedInUser.role)) {
+      setNonAdminError("Your account is not authorized for this access");
+      return logoutMutate();
+    }
+
+    if (loggedInUser.role === Roles.MANAGER) {
+      const { data } = await refetchSelf();
+      if (data) return setUser(data.user);
+    }
+
+    setUser(loggedInUser);
+  };
 
   const {
     mutate: loginMutate,
     isPending,
-    isError,
     error,
   } = useMutation({
-    mutationKey: ["login"],
     mutationFn: login,
-    onSuccess: async ({ data: user }) => {
-      if (user.role === Roles.MANAGER) {
-        const { data } = await refetchSelf();
-        setUser(data as TUser);
-      }
-      if (!isAuthorized(user.role)) {
-        setNonAdminError("Admin privileges required");
-        return logoutMutate();
-      }
-      setUser(user);
-    },
+    onSuccess: handleLoginSuccess,
   });
 
-  let errors: string[] = [];
+  const errorMessage: string = useMemo(() => {
+    if (error instanceof AxiosError) {
+      return (
+        error.response?.data.message ??
+        (error.code === "ERR_NETWORK"
+          ? "Looks like we're having trouble reaching the network. Please check your internet connection and try again."
+          : "")
+      );
+    }
+    return "";
+  }, [error]);
 
-  if (error instanceof AxiosError) {
-    errors = error.response?.data.errors.map(
-      (err: { message: string }) => err.message
-    );
-  }
-  if (error instanceof AxiosError && error.code === "ERR_NETWORK") {
-    error.message =
-      "Looks like we're having trouble reaching the network. Please check your internet connection and try again.";
-  }
+  const handleFormSubmit = (values: TCredentials & { remember: boolean }) => {
+    loginMutate({
+      email: values.email,
+      password: values.password,
+    });
+  };
+
   return (
     <ConfigProvider theme={{ token: { fontSize: 13 } }}>
       <Layout className="login__container">
@@ -99,30 +113,9 @@ function LoginPage() {
               initialValues={{
                 remember: true,
               }}
-              onFinish={(values: TCredentials & { remember: boolean }) => {
-                loginMutate({
-                  email: values.email,
-                  password: values.password,
-                });
-              }}
+              onFinish={handleFormSubmit}
             >
-              {isError && (
-                <Alert
-                  className="form__alert"
-                  type="error"
-                  message={
-                    errors?.map((err) => <div key={err}>{err}</div>) ??
-                    error.message
-                  }
-                />
-              )}
-              {nonAdminError && (
-                <Alert
-                  className="form__alert"
-                  type="error"
-                  message={nonAdminError}
-                />
-              )}
+              <ErrorAlert message={errorMessage || nonAdminError} />
               <Form.Item
                 rules={[
                   { type: "email", required: true, validateTrigger: "onBlur" },
@@ -136,6 +129,7 @@ function LoginPage() {
                   placeholder="Email"
                 />
               </Form.Item>
+
               <Form.Item name="password" rules={[{ required: true }]}>
                 <Input.Password
                   onBlur={handleFormValidation}

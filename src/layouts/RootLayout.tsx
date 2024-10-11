@@ -6,11 +6,11 @@ import { Loader } from "../ui";
 
 const RootLayout = () => {
   const { setUser } = useAuth();
-  const { user, isLoading } = useSelf();
+  const { data, isLoading } = useSelf();
 
   useEffect(() => {
-    if (user) setUser(user);
-  }, [user, setUser]);
+    if (data?.user) setUser(data.user);
+  }, [data, setUser]);
 
   if (isLoading) return <Loader fullscreen size={40} />;
 

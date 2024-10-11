@@ -36,10 +36,10 @@ api.interceptors.response.use(
         return api.request({ ...originalRequest, headers });
       } catch (error) {
         useAuth.getState().logoutFromStore();
-        return Promise.reject(error);
+        return Promise.reject(error as Error);
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(error as Error);
   }
 );

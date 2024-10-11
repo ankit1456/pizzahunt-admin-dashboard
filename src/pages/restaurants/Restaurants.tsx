@@ -1,21 +1,22 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Breadcrumb, Button, Flex, Form, message, Typography } from "antd";
-import { useState } from "react";
-import { FaAngleRight } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Button, Flex, Form, message, Typography } from "antd";
+import { ColumnsType } from "antd/lib/table";
+import { AxiosError } from "axios";
+import { useMemo, useState } from "react";
+import { MdEdit } from "react-icons/md";
+import { useSearchParams } from "react-router-dom";
 import {
   AddRestaurantDrawer,
   AddRestaurantForm,
   RestaurantFilters,
 } from "../../features/restaurants";
 import { useRestaurants } from "../../hooks";
-import { createRestaurant } from "../../http/api";
-import { LIMIT_PER_PAGE, TFilterPayload, TQueryParams } from "../../types";
+import { createRestaurant, updateRestaurant } from "../../http/api";
+import { LIMIT_PER_PAGE, TQueryParams } from "../../types";
 import { TTenant, TTenantPayload } from "../../types/tenant.types";
-import { Loader, Table } from "../../ui";
-import { debounce, formatDate } from "../../utils";
-import { ColumnsType } from "antd/lib/table";
+import { Breadcrumb, Loader, Table } from "../../ui";
+import { formatDate } from "../../utils";
 
 const columns: ColumnsType<TTenant> = [
   {
@@ -26,7 +27,6 @@ const columns: ColumnsType<TTenant> = [
       <span style={{ color: "var(--primary-color)" }}>{name}</span>
     ),
   },
-
   {
     title: "Address",
     dataIndex: "address",
@@ -42,35 +42,38 @@ const columns: ColumnsType<TTenant> = [
 
 function Restaurants() {
   const [messageApi, contextHolder] = message.useMessage();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [restaurantToEdit, setRestaurantToEdit] = useState<TTenant | null>(
+    null
+  );
+
   const [queryParams, setQueryParams] = useState<TQueryParams>({
-    page: 1,
+    page: Number(searchParams.get("page")) || 1,
     limit: LIMIT_PER_PAGE,
   });
 
   const [form] = Form.useForm<TTenantPayload>();
-  const [restaurantFilterForm] = Form.useForm();
-
   const { data, isFetching, isError, error } = useRestaurants(queryParams);
 
-  const handleCloseDrawer = () => setIsDrawerOpen(false);
+  const isEditMode = !!restaurantToEdit;
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+  };
 
   const handlePageChange = (page: number) => {
+    searchParams.set("page", String(page));
+    setSearchParams(searchParams);
+
     setQueryParams((queryParams) => ({
       ...queryParams,
       page,
     }));
   };
 
-  const handleDebouncedSearch = debounce((filterData: TFilterPayload[]) => {
-    const q = filterData[0].value;
-    setQueryParams((params) => ({ ...params, q, page: 1 }));
-  });
-
   const { mutate: newRestaurantMutate } = useMutation({
-    mutationKey: ["restaurant"],
     mutationFn: createRestaurant,
     onSuccess: () => {
       form.resetFields();
@@ -89,73 +92,113 @@ function Restaurants() {
     },
   });
 
-  const handleSubmit = (formValues: TTenantPayload) => {
-    newRestaurantMutate(formValues);
+  const { mutate: editRestaurantMutate } = useMutation({
+    mutationFn: (formValues: TTenantPayload) =>
+      updateRestaurant(restaurantToEdit!.id, formValues),
+    onSuccess: () => {
+      form.resetFields();
+      handleCloseDrawer();
+
+      queryClient.invalidateQueries({
+        queryKey: ["restaurants"],
+      });
+      messageApi.open({
+        type: "success",
+        content: "Restaurant updated successfully",
+        style: {
+          fontSize: "small",
+        },
+      });
+    },
+  });
+
+  const handleEditRestaurant = (tenant: TTenant) => {
+    setRestaurantToEdit(tenant);
+    form.setFieldsValue(tenant);
+    setIsDrawerOpen(true);
   };
+
+  const handleSubmit = (formValues: TTenantPayload) => {
+    if (isEditMode) editRestaurantMutate(formValues);
+    else newRestaurantMutate(formValues);
+  };
+
+  const errorMessage = useMemo(() => {
+    if (error instanceof AxiosError)
+      return error.response?.data.message ?? error.code === "ERR_NETWORK"
+        ? "Having trouble reaching the internet. Please try again later"
+        : error.message;
+
+    return "";
+  }, [error]);
 
   return (
     <Flex vertical gap={12}>
       {contextHolder}
       <Flex justify="space-between" align="center">
         <Breadcrumb
-          separator={<FaAngleRight style={{ marginBottom: "-2px" }} />}
-          style={{ fontSize: ".8rem" }}
           items={[
             {
-              title: (
-                <Link className="link" to="/">
-                  Dashboard
-                </Link>
-              ),
-            },
-            {
-              title: (
-                <Link className="link" to="/restaurants">
-                  Restaurants
-                </Link>
-              ),
+              label: "Restaurants",
+              to: "/restaurants",
             },
           ]}
         />
 
         <div style={{ marginRight: "10px" }}>
           {isFetching && <Loader size={22} />}
-          {isError && (
-            <Typography.Text type="danger">{error?.message}</Typography.Text>
+          {isError && !isFetching && (
+            <Typography.Text className="font-12" type="danger">
+              {errorMessage}
+            </Typography.Text>
           )}
         </div>
       </Flex>
 
-      <Form form={restaurantFilterForm} onFieldsChange={handleDebouncedSearch}>
-        <RestaurantFilters>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setIsDrawerOpen(true)}
-          >
-            Add Restaurant
-          </Button>
-        </RestaurantFilters>
-      </Form>
+      <RestaurantFilters setQueryParams={setQueryParams}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setIsDrawerOpen(true)}
+        >
+          Add Restaurant
+        </Button>
+      </RestaurantFilters>
 
       <Table<TTenant>
-        columns={columns}
+        columns={[
+          ...columns,
+          {
+            title: "Actions",
+            render: (_: string, tenant: TTenant) => {
+              return (
+                <Button
+                  type="link"
+                  onClick={() => handleEditRestaurant(tenant)}
+                >
+                  <MdEdit size={18} />
+                </Button>
+              );
+            },
+          },
+        ]}
         data={data}
         onPageChange={handlePageChange}
         rowKey="id"
       />
 
       <AddRestaurantDrawer
+        form={form}
         isDrawerOpen={isDrawerOpen}
         onCloseDrawer={handleCloseDrawer}
-        form={form}
+        isEditMode={isEditMode}
       >
         <Form<TTenantPayload>
           layout="vertical"
           form={form}
           onFinish={handleSubmit}
         >
-          <AddRestaurantForm form={form} />
+          <AddRestaurantForm />
           <button type="submit" style={{ display: "none" }} />
         </Form>
       </AddRestaurantDrawer>

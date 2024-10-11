@@ -5,10 +5,13 @@ const UnAuthenticatedLayout = () => {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
 
-  if (user)
-    return <Navigate to={`${searchParams.get("redirect") ?? "/"}`} replace />;
+  if (!user) return <Outlet />;
 
-  return <Outlet />;
+  const redirect = searchParams.get("redirect");
+  const redirectPath = redirect ? `/${redirect}` : "/";
+  searchParams.delete("redirect");
+
+  return <Navigate to={`${redirectPath}?${searchParams.toString()}`} replace />;
 };
 
 export default UnAuthenticatedLayout;

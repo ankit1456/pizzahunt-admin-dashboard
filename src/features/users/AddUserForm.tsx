@@ -1,22 +1,26 @@
-import { Card, Col, Flex, Form, FormInstance, Row, Select } from "antd";
+import { Card, Col, Flex, Form, Row, Select } from "antd";
 import { FocusEvent, useState } from "react";
 import { useInfiniteRestaurants } from "../../hooks";
+import { useAuth } from "../../store";
 import { LIMIT_PER_SCROLL, TQueryParams } from "../../types";
 import { Roles } from "../../types/user.types";
 import { FormItem, Loader } from "../../ui";
 import { debounce } from "../../utils";
 
 type Props = {
-  form: FormInstance;
   isEditMode: boolean;
+  editUserId: string | undefined;
 };
 
-function AddUserForm({ form, isEditMode = false }: Readonly<Props>) {
+function AddUserForm({ isEditMode = false, editUserId }: Readonly<Props>) {
+  const { user } = useAuth();
   const [queryParams, setQueryParams] = useState<TQueryParams>({
     page: 1,
     limit: LIMIT_PER_SCROLL,
     q: "",
   });
+
+  const form = Form.useFormInstance();
 
   const { data, isFetching, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useInfiniteRestaurants(queryParams);
@@ -115,6 +119,7 @@ function AddUserForm({ form, isEditMode = false }: Readonly<Props>) {
                     allowClear
                     className="width-full"
                     placeholder="assign role"
+                    disabled={user?.id === editUserId}
                   >
                     <Select.Option value={Roles.CUSTOMER}>
                       Customer

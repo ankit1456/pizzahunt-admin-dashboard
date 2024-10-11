@@ -7,8 +7,6 @@ export default function debounce<T extends (...args: never[]) => void>(
   return function (this: unknown, ...args: Parameters<T>): void {
     if (timer) clearTimeout(timer);
 
-    timer = setTimeout(() => {
-      cb.apply(this, args);
-    }, delay);
+    timer = setTimeout(() => cb.apply(this, args), delay);
   };
 }
