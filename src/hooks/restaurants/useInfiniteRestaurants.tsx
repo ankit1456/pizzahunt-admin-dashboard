@@ -1,7 +1,7 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { getRestaurants } from "../http/api";
-import { TQueryParams } from "../types";
-import { getQueryString } from "../utils";
+import { getRestaurants } from "../../http/api";
+import { TQueryParams } from "../../types";
+import { getQueryString } from "../../utils";
 
 function useInfiniteRestaurants(queryParams: TQueryParams) {
   const {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { self } from "../http/api";
+import { self } from "../../http/api";
 
 const getSelf = async () => {
   const { data } = await self();

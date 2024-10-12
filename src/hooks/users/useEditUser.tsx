@@ -1,31 +1,32 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInstance } from "antd/lib/message/interface";
-import { createUser } from "../http/api";
+import { updateUser } from "../../http/api";
+import { TUser, TUserPayload } from "../../types/user.types";
 
-function useCreateUser(
+const useEditUser = (
+  userToEdit: TUser | null,
   successHandler?: () => void,
   messageApi?: MessageInstance
-) {
+) => {
   const queryClient = useQueryClient();
 
-  const { mutate: newUserMutate } = useMutation({
-    mutationKey: ["create-user"],
-    mutationFn: createUser,
+  const { mutate: editUserMutate } = useMutation({
+    mutationFn: (formValues: TUserPayload) =>
+      updateUser(userToEdit!.id, formValues),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       successHandler?.();
 
       messageApi?.open({
         type: "success",
-        content: "User created successfully",
+        content: "User updated successfully",
         style: {
           fontSize: "small",
         },
       });
     },
   });
+  return { editUserMutate };
+};
 
-  return { newUserMutate };
-}
-
-export default useCreateUser;
+export default useEditUser;
