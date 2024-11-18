@@ -8,24 +8,29 @@ import {
 } from "./../types/user.types";
 import api from "./client";
 
+const AUTH_SERVICE = "/api/auth";
+const CATALOG_SERVICE = "/api/catalog";
+
 // auth
 export const login = (credentials: TCredentials) =>
-  api.post<TAuthResponse>("/auth/login", credentials);
-export const self = () => api.get<TAuthResponse>("/auth/self");
-export const logout = () => api.post("/auth/logout");
+  api.post<TAuthResponse>(`${AUTH_SERVICE}/login`, credentials);
+export const self = () => api.get<TAuthResponse>(`${AUTH_SERVICE}/self`);
+export const logout = () => api.post(`${AUTH_SERVICE}/logout`);
 
 // users
 export const getUsers = (queryString: string) =>
-  api.get<TPaginatedResponse<TUser>>(`/users?${queryString}`);
+  api.get<TPaginatedResponse<TUser>>(`${AUTH_SERVICE}/users?${queryString}`);
 export const createUser = (user: TUserPayload) =>
-  api.post<TUser>("/users", user);
+  api.post<TUser>(`${AUTH_SERVICE}/users`, user);
 export const updateUser = (userId: string, user: TUserPayload) =>
-  api.patch<TUser>(`/users/${userId}`, user);
+  api.patch<TUser>(`${AUTH_SERVICE}/users/${userId}`, user);
 
 // tenants
 export const getRestaurants = (queryString: string) =>
-  api.get<TPaginatedResponse<TTenant>>(`/tenants?${queryString}`);
+  api.get<TPaginatedResponse<TTenant>>(
+    `${AUTH_SERVICE}/tenants?${queryString}`
+  );
 export const createRestaurant = (tenant: TTenantPayload) =>
-  api.post<TTenant>("/tenants", tenant);
+  api.post<TTenant>(`${AUTH_SERVICE}/tenants`, tenant);
 export const updateRestaurant = (tenantId: string, tenant: TTenantPayload) =>
-  api.patch<TTenant>(`/tenants/${tenantId}`, tenant);
+  api.patch<TTenant>(`${AUTH_SERVICE}/tenants/${tenantId}`, tenant);
