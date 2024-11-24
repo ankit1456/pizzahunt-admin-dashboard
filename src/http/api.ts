@@ -1,4 +1,5 @@
 import { TPaginatedResponse } from "../types";
+import { TCategory } from "../types/category.types";
 import { TTenant, TTenantPayload } from "../types/tenant.types";
 import {
   TAuthResponse,
@@ -34,3 +35,13 @@ export const createRestaurant = (tenant: TTenantPayload) =>
   api.post<TTenant>(`${AUTH_SERVICE}/tenants`, tenant);
 export const updateRestaurant = (tenantId: string, tenant: TTenantPayload) =>
   api.patch<TTenant>(`${AUTH_SERVICE}/tenants/${tenantId}`, tenant);
+
+//products
+export const getProducts = (queryString: string) =>
+  api.get(`${CATALOG_SERVICE}/products?${queryString}`);
+
+//categories
+export const getCategories = (queryString: string) =>
+  api.get<TPaginatedResponse<TCategory>>(
+    `${CATALOG_SERVICE}/categories?${queryString}`
+  );

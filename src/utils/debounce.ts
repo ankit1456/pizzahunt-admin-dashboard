@@ -1,6 +1,6 @@
 export default function debounce<T extends (...args: never[]) => void>(
   cb: T,
-  delay = 500
+  delay = 1000
 ): (...args: Parameters<T>) => void {
   let timer: number;
 

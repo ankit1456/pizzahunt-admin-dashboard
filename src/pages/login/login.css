@@ -2,23 +2,4 @@
   height: 100dvh;
   display: grid;
   place-items: center;
-
-  .form__alert {
-    font-size: 0.71rem;
-    margin-bottom: 16px;
-    max-width: 17.6rem;
-    padding: 6px 10px;
-  }
-}
-
-.login__title {
-  width: 100%;
-  font-size: 16px;
-  justify-content: center;
-  margin-left: -10px;
-}
-
-.login__input-icon {
-  opacity: 0.7;
-  margin-right: 4px;
 }

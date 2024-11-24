@@ -1,11 +1,9 @@
 import { Card, Col, Flex, Form, Row, Select } from "antd";
-import { FocusEvent, useState } from "react";
-import { useInfiniteRestaurants } from "../../hooks";
+import { FocusEvent } from "react";
+import SelectRestaurant from "../../common/components/SelectRestaurant";
 import { useAuth } from "../../store";
-import { LIMIT_PER_SCROLL, TQueryParams } from "../../types";
 import { Roles } from "../../types/user.types";
-import { FormItem, Loader } from "../../ui";
-import { debounce } from "../../utils";
+import { FormItem } from "../../ui";
 
 type Props = {
   isEditMode: boolean;
@@ -14,24 +12,12 @@ type Props = {
 
 function AddUserForm({ isEditMode = false, editUserId }: Readonly<Props>) {
   const { user } = useAuth();
-  const [queryParams, setQueryParams] = useState<TQueryParams>({
-    page: 1,
-    limit: LIMIT_PER_SCROLL,
-    q: "",
-  });
 
   const form = Form.useFormInstance();
-
-  const { data, isFetching, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useInfiniteRestaurants(queryParams);
 
   const handleFormValidation = (e: FocusEvent<HTMLInputElement>) => {
     form.validateFields([e.target.id]);
   };
-
-  const handleDebouncedSearch = debounce((value: string) => {
-    setQueryParams((params) => ({ ...params, q: value }));
-  });
 
   const selectedRole = Form.useWatch<Roles>("role", form);
 
@@ -133,53 +119,7 @@ function AddUserForm({ isEditMode = false, editUserId }: Readonly<Props>) {
               {selectedRole === Roles.MANAGER && (
                 <Col span={12}>
                   <Form.Item label="Restaurant" name="tenantId">
-                    <Select
-                      allowClear
-                      className="width-full"
-                      placeholder="assign restaurant"
-                      listHeight={192}
-                      showSearch
-                      filterOption={false}
-                      loading={isFetching}
-                      onPopupScroll={(e) => {
-                        const target = e.target as HTMLElement;
-                        if (
-                          target.scrollTop + target.offsetHeight ===
-                            target.scrollHeight &&
-                          hasNextPage &&
-                          !isFetching &&
-                          !isFetchingNextPage
-                        ) {
-                          fetchNextPage();
-                        }
-                      }}
-                      onSearch={handleDebouncedSearch}
-                    >
-                      {data?.map((page) =>
-                        page.data.data.map((restaurant) => (
-                          <Select.Option
-                            value={restaurant.id}
-                            key={restaurant.id}
-                          >
-                            {restaurant.name}, {restaurant.address}
-                          </Select.Option>
-                        ))
-                      )}
-
-                      {hasNextPage && (
-                        <Select.Option
-                          style={{ pointerEvents: "none" }}
-                          value=""
-                          disabled
-                        >
-                          {isFetchingNextPage && (
-                            <Flex align="center" justify="center">
-                              <Loader />
-                            </Flex>
-                          )}
-                        </Select.Option>
-                      )}
-                    </Select>
+                    <SelectRestaurant />
                   </Form.Item>
                 </Col>
               )}

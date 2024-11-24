@@ -37,7 +37,8 @@ const Dashboard = () => {
           <Outlet />
         </Layout.Content>
         <Layout.Footer style={{ textAlign: "center", paddingBlock: "15px" }}>
-          Pizzahunt ©{new Date().getFullYear()} Made with <HeartFilled />
+          Pizzahunt ©{new Date().getFullYear()} Made with{" "}
+          <HeartFilled style={{ color: "red" }} />
         </Layout.Footer>
       </Layout>
     </Layout>

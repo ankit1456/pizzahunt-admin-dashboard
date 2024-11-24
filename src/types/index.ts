@@ -11,6 +11,9 @@ export type TQueryParams = {
   limit: number;
   q?: string;
   role?: string;
+  categoryId?: string;
+  tenantId?: string;
+  isPublished?: boolean;
 };
 
 export type TFilterPayload = {

@@ -1,6 +1,6 @@
 import { TQueryParams } from "../types";
 
-export default function getQueryString(queryParams: TQueryParams | undefined) {
+export default function getQueryString(queryParams?: TQueryParams) {
   if (!queryParams || !Object.keys(queryParams).length) return "";
 
   const sanitizedQueryParams = Object.entries(queryParams)

@@ -1,5 +1,5 @@
 import { Table as AntTable, Typography } from "antd";
-import { AnyObject } from "antd/es/_util/type";
+import { AnyObject } from "antd/lib/_util/type";
 import { ColumnsType } from "antd/lib/table";
 import { useCallback } from "react";
 import { useLocation } from "react-router-dom";

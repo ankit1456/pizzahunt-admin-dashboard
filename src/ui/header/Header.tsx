@@ -33,7 +33,7 @@ function Header({ collapsed }: Props) {
       }}
     >
       <Flex gap="middle" align="center" justify="space-between">
-        <Pill type="primary" fontSize={11.5}>
+        <Pill type="primary">
           <Flex gap={7}>
             <Badge status="success" />{" "}
             <span>{isAdmin ? "You are an admin" : tenantInfo}</span>

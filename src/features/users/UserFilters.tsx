@@ -1,5 +1,5 @@
 import { Card, Col, Form, Input, Row, Select } from "antd";
-import { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import { Dispatch, PropsWithChildren, SetStateAction, useMemo } from "react";
 import { Roles } from "../../types/user.types";
 import { useSearchParams } from "react-router-dom";
 import { TFilterPayload, TQueryParams } from "../../types";
@@ -9,16 +9,20 @@ type Props = {
   setQueryParams: Dispatch<SetStateAction<TQueryParams>>;
 };
 
-function UserFilter({
+function UserFilters({
   children,
   setQueryParams,
 }: Readonly<PropsWithChildren<Props>>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm();
 
-  const debouncedSearch = debounce((value: string | undefined) => {
-    setQueryParams((params) => ({ ...params, q: value, page: 1 }));
-  }, 2000);
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string | undefined) => {
+        setQueryParams((params) => ({ ...params, q: value, page: 1 }));
+      }),
+    [setQueryParams]
+  );
 
   const handleFilterChange = (filterData: TFilterPayload[]) => {
     const filters = filterData
@@ -27,9 +31,8 @@ function UserFilter({
       }))
       .reduce((acc, entry) => ({ ...acc, ...entry }), {});
 
-    if ("q" in filters) {
-      debouncedSearch(filters.q);
-    } else {
+    if ("q" in filters) debouncedSearch(filters.q);
+    else {
       setQueryParams((params) => ({ ...params, ...filters, page: 1 }));
 
       if (filters.role) searchParams.set("role", filters.role);
@@ -84,4 +87,4 @@ function UserFilter({
   );
 }
 
-export default UserFilter;
+export default UserFilters;

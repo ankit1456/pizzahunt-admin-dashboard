@@ -16,7 +16,7 @@
 
 .form__alert {
   font-size: 13px;
-  margin-bottom: 16px;
+  padding: 6px 10px;
 }
 .ant-form-item-explain-error {
   font-size: 11.6px;

@@ -59,9 +59,7 @@ function Restaurants() {
   const { data, isFetching, isError, error } = useRestaurants(queryParams);
 
   const isEditMode = !!restaurantToEdit;
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
+  const handleCloseDrawer = () => setIsDrawerOpen(false);
 
   const handlePageChange = (page: number) => {
     searchParams.set("page", String(page));

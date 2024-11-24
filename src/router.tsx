@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { AdminProtected } from "./features/authentication";
 import { Dashboard, RootLayout, UnAuthenticatedLayout } from "./layouts";
 import { HomePage, LoginPage, PageNotFound, Restaurants, Users } from "./pages";
+import Products from "./features/products/Products";
 
 export const router = createBrowserRouter([
   {
@@ -24,12 +25,12 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "products",
-            element: <div>Products</div>,
-          },
-          {
             path: "restaurants",
             element: <Restaurants />,
+          },
+          {
+            path: "products",
+            element: <Products />,
           },
           {
             path: "promos",
