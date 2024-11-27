@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInstance } from "antd/lib/message/interface";
-import { createUser } from "../../http/api";
+import { createUser } from "../../http/services/user.service";
 
 function useCreateUser(
   successHandler?: () => void,

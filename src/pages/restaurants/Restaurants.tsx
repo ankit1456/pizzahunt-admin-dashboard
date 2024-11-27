@@ -12,11 +12,14 @@ import {
   RestaurantFilters,
 } from "../../features/restaurants";
 import { useRestaurants } from "../../hooks";
-import { createRestaurant, updateRestaurant } from "../../http/api";
-import { LIMIT_PER_PAGE, TQueryParams } from "../../types";
-import { TTenant, TTenantPayload } from "../../types/tenant.types";
+import { LIMIT_PER_PAGE, TQueryParams } from "../../lib/types";
+import { TTenant, TTenantPayload } from "../../lib/types/tenant.types";
 import { Breadcrumb, Loader, Table } from "../../ui";
-import { formatDate } from "../../utils";
+import { formatDate } from "../../lib/utils";
+import {
+  createRestaurant,
+  updateRestaurant,
+} from "../../http/services/tenant.service";
 
 const columns: ColumnsType<TTenant> = [
   {

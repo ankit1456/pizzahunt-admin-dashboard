@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInstance } from "antd/lib/message/interface";
-import { updateUser } from "../../http/api";
-import { TUser, TUserPayload } from "../../types/user.types";
+import { TUser, TUserPayload } from "../../lib/types/user.types";
+import { updateUser } from "../../http/services/user.service";
 
 const useEditUser = (
   userToEdit: TUser | null,

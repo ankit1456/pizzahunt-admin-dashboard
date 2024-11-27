@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInstance } from "antd/lib/message/interface";
-import { createProduct } from "../../http/api";
+import { createProduct } from "../../http/services/product.service";
 
 function useCreateProduct(
   successHandler?: () => void,

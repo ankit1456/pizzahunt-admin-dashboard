@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getUsers } from "../../http/api";
-import { TQueryParams } from "../../types";
-import { getQueryString } from "../../utils";
+import { TQueryParams } from "../../lib/types";
+import { getQueryString } from "../../lib/utils";
+import { getUsers } from "../../http/services/user.service";
 
 function useUsers(queryParams: TQueryParams) {
   const { data, isFetching, isError, error } = useQuery({

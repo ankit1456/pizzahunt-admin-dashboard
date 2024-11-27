@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import { AdminProtected } from "./features/authentication";
 import { Dashboard, RootLayout, UnAuthenticatedLayout } from "./layouts";
-import { HomePage, LoginPage, PageNotFound, Restaurants, Users } from "./pages";
-import Products from "./features/products/Products";
-
+import { HomePage, LoginPage, Restaurants, Users } from "./pages";
+import Products from "./components/products/Products";
+import { useAuth } from "@src/state/store";
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,

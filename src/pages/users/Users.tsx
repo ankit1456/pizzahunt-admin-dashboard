@@ -7,11 +7,11 @@ import { MdEdit } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
 import { AddUserDrawer, AddUserForm, UserFilters } from "../../features/users";
 import { useCreateUser, useEditUser, useUsers } from "../../hooks";
-import { LIMIT_PER_PAGE, TQueryParams } from "../../types";
-import { TTenant } from "../../types/tenant.types";
-import { Roles, TUser, TUserPayload } from "../../types/user.types";
+import { LIMIT_PER_PAGE, TQueryParams } from "../../lib/types";
+import { TTenant } from "../../lib/types/tenant.types";
+import { Roles, TUser, TUserPayload } from "../../lib/types/user.types";
 import { Breadcrumb, Loader, Table } from "../../ui";
-import { formatDate } from "../../utils";
+import { formatDate } from "../../lib/utils";
 
 const columns: ColumnsType<TUser> = [
   {

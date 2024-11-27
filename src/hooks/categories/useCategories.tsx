@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getCategories } from "../../http/api";
-import { TQueryParams } from "../../types";
-import { getQueryString } from "../../utils";
+import { TQueryParams } from "../../lib/types";
+import { getQueryString } from "../../lib/utils";
+import { getCategories } from "../../http/services/category.service";
 
 function useCategories(queryParams?: TQueryParams) {
   const { data, isFetching, isError, error } = useQuery({

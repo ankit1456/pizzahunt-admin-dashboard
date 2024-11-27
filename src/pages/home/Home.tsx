@@ -3,10 +3,10 @@ import { useState } from "react";
 import { GiPaperBagFolded } from "react-icons/gi";
 import { IoStatsChart } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { RecentOrders } from "../../features/orders";
+import { RecentOrders } from "../../components/orders";
 import { useAuth } from "../../store";
 import { StatBox } from "../../ui";
-import { getGreetings } from "../../utils";
+import { getGreetings } from "../../lib/utils";
 import "./home.css";
 
 const data = [

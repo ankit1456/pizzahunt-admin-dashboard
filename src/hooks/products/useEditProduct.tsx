@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInstance } from "antd/lib/message/interface";
-import { updateProduct } from "../../http/api";
-import { TProduct } from "../../types/product.types";
+import { TProduct } from "../../lib/types/product.types";
+import { updateProduct } from "../../http/services/product.service";
 
 const useEditProduct = (
   productToEdit: TProduct | null,

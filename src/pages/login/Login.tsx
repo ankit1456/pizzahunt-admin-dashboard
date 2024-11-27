@@ -1,5 +1,5 @@
 import { ConfigProvider, Layout, Space } from "antd";
-import LoginForm from "../../features/authentication/loginForm/LoginForm";
+import LoginForm from "../../components/auth/loginForm/LoginForm";
 import { Logo } from "../../ui";
 import "./login.css";
 
