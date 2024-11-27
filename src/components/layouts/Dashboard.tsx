@@ -7,8 +7,8 @@ import {
   useLocation,
   useSearchParams,
 } from "react-router-dom";
-import { useAuth } from "../store";
-import { Header, Sider } from "../ui";
+import { useAuth } from "@src/state/store";
+import { Header, Sider } from "@components/common/ui";
 
 const Dashboard = () => {
   const { user } = useAuth();

@@ -3,11 +3,11 @@ import { MessageInstance } from "antd/lib/message/interface";
 import { TUser, TUserPayload } from "../../lib/types/user.types";
 import { updateUser } from "../../http/services/user.service";
 
-const useEditUser = (
+export function useEditUser(
   userToEdit: TUser | null,
   successHandler?: () => void,
   messageApi?: MessageInstance
-) => {
+) {
   const queryClient = useQueryClient();
 
   const { mutate: editUserMutate } = useMutation({
@@ -27,6 +27,4 @@ const useEditUser = (
     },
   });
   return { editUserMutate };
-};
-
-export default useEditUser;
+}

@@ -1,3 +1,6 @@
+import { Logo } from "@components/common/ui";
+import { Roles } from "@lib/types/user.types";
+import { useAuth } from "@src/state/store";
 import { Layout, Menu } from "antd";
 import { Dispatch, SetStateAction } from "react";
 import { FaGift, FaUserGroup } from "react-icons/fa6";
@@ -5,9 +8,6 @@ import { IoIosRestaurant } from "react-icons/io";
 import { IoFastFood } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { useAuth } from "../../store";
-import { Roles } from "../../common/types/user.types";
-import Logo from "../Logo";
 import "./sider.css";
 
 const getMenuItems = (role: string) => {

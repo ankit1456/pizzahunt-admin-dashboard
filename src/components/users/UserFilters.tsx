@@ -1,9 +1,9 @@
+import { TFilterPayload, TQueryParams } from "@lib/types";
+import { Roles } from "@lib/types/user.types";
+import { debounce } from "@lib/utils";
 import { Card, Col, Form, Input, Row, Select } from "antd";
 import { Dispatch, PropsWithChildren, SetStateAction, useMemo } from "react";
-import { Roles } from "../../lib/types/user.types";
 import { useSearchParams } from "react-router-dom";
-import { TFilterPayload, TQueryParams } from "../../lib/types";
-import { debounce } from "../../lib/utils";
 
 type Props = {
   setQueryParams: Dispatch<SetStateAction<TQueryParams>>;

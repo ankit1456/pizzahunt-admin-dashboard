@@ -1,5 +1,5 @@
+import { useAuth } from "@src/state/store";
 import axios from "axios";
-import { useAuth } from "../store";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_API_URL,

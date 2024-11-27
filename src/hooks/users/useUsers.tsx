@@ -3,7 +3,7 @@ import { TQueryParams } from "../../lib/types";
 import { getQueryString } from "../../lib/utils";
 import { getUsers } from "../../http/services/user.service";
 
-function useUsers(queryParams: TQueryParams) {
+export function useUsers(queryParams: TQueryParams) {
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ["users", queryParams],
     queryFn: () => {
@@ -20,5 +20,3 @@ function useUsers(queryParams: TQueryParams) {
     isError,
   };
 }
-
-export default useUsers;

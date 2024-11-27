@@ -1,10 +1,10 @@
+import { Pill } from "@components/common/ui";
 import { Flex, List } from "antd";
-import { Pill } from "../../../ui";
 import "./recentOrders.css";
 
 const order = {
   customerName: "Sophia Garcia",
-  customerAddress: "987 Cedar St, Hilltown, WXY",
+  customerAddress: "987 Cedar St, Hilton, WXY",
   price: 65.25,
   status: "preparing",
 };

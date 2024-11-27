@@ -18,4 +18,4 @@ function PageNotFound() {
   );
 }
 
-export { PageNotFound };
+export default PageNotFound;

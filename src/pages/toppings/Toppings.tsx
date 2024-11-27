@@ -1,7 +1,5 @@
-import React from "react";
-
-function Categories() {
-  return <div>Categories</div>;
+function ToppingsPage() {
+  return <div>ToppingsPage</div>;
 }
 
-export default Categories;
+export default ToppingsPage;

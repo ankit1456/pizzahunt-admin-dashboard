@@ -1,13 +1,13 @@
+import { updateProduct } from "@http/services/product.service";
+import { TProduct } from "@lib/types/product.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInstance } from "antd/lib/message/interface";
-import { TProduct } from "../../lib/types/product.types";
-import { updateProduct } from "../../http/services/product.service";
 
-const useEditProduct = (
+export function useEditProduct(
   productToEdit: TProduct | null,
   successHandler?: () => void,
   messageApi?: MessageInstance
-) => {
+) {
   const queryClient = useQueryClient();
 
   const { mutate: editProductMutate, isPending } = useMutation({
@@ -27,6 +27,4 @@ const useEditProduct = (
     },
   });
   return { editProductMutate, isPending };
-};
-
-export default useEditProduct;
+}

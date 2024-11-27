@@ -1,9 +1,9 @@
+import { getRestaurants } from "@http/services/tenant.service";
+import { TQueryParams } from "@lib/types";
+import { getQueryString } from "@lib/utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { TQueryParams } from "../../lib/types";
-import { getQueryString } from "../../lib/utils";
-import { getRestaurants } from "../../http/services/tenant.service";
 
-function useRestaurants(queryParams: TQueryParams) {
+export function useRestaurants(queryParams: TQueryParams) {
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ["restaurants", queryParams],
     queryFn: () => {
@@ -20,5 +20,3 @@ function useRestaurants(queryParams: TQueryParams) {
     isError,
   };
 }
-
-export default useRestaurants;

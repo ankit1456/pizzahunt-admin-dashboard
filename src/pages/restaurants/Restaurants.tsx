@@ -1,4 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
+import { LIMIT_PER_PAGE, TQueryParams } from "@lib/types";
+import { TTenant, TTenantPayload } from "@lib/types/tenant.types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Flex, Form, message, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
@@ -6,20 +8,18 @@ import { AxiosError } from "axios";
 import { useMemo, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
+import { Breadcrumb, Loader, Table } from "@components/common/ui";
 import {
   AddRestaurantDrawer,
   AddRestaurantForm,
   RestaurantFilters,
-} from "../../features/restaurants";
-import { useRestaurants } from "../../hooks";
-import { LIMIT_PER_PAGE, TQueryParams } from "../../lib/types";
-import { TTenant, TTenantPayload } from "../../lib/types/tenant.types";
-import { Breadcrumb, Loader, Table } from "../../ui";
-import { formatDate } from "../../lib/utils";
+} from "@components/restaurants";
+import { useRestaurants } from "@hooks/restaurants";
 import {
   createRestaurant,
   updateRestaurant,
-} from "../../http/services/tenant.service";
+} from "@http/services/tenant.service";
+import { formatDate } from "@lib/utils";
 
 const columns: ColumnsType<TTenant> = [
   {
@@ -43,7 +43,7 @@ const columns: ColumnsType<TTenant> = [
   },
 ];
 
-function Restaurants() {
+function RestaurantsPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -207,4 +207,4 @@ function Restaurants() {
   );
 }
 
-export default Restaurants;
+export default RestaurantsPage;

@@ -1,6 +1,6 @@
+import { LoginForm } from "@components/auth";
+import { Logo } from "@components/common/ui";
 import { ConfigProvider, Layout, Space } from "antd";
-import LoginForm from "../../components/auth/loginForm/LoginForm";
-import { Logo } from "../../ui";
 import "./login.css";
 
 function LoginPage() {

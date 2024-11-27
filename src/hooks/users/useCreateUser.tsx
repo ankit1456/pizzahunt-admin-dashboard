@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessageInstance } from "antd/lib/message/interface";
 import { createUser } from "../../http/services/user.service";
 
-function useCreateUser(
+export function useCreateUser(
   successHandler?: () => void,
   messageApi?: MessageInstance
 ) {
@@ -27,5 +27,3 @@ function useCreateUser(
 
   return { newUserMutate };
 }
-
-export default useCreateUser;

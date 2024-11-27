@@ -1,12 +1,12 @@
+import { StatBox } from "@components/common/ui";
+import { RecentOrders } from "@components/orders";
+import { getGreetings } from "@lib/utils";
+import { useAuth } from "@src/state/store";
 import { Card, Col, Flex, List, Row, Typography } from "antd";
 import { useState } from "react";
 import { GiPaperBagFolded } from "react-icons/gi";
 import { IoStatsChart } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { RecentOrders } from "../../components/orders";
-import { useAuth } from "../../store";
-import { StatBox } from "../../ui";
-import { getGreetings } from "../../lib/utils";
 import "./home.css";
 
 const data = [
@@ -20,7 +20,7 @@ const data = [
   "Australian walks 100km after outback crash.",
 ];
 
-function Home() {
+function HomePage() {
   const { user } = useAuth();
   const [salesFilter, setSalesFilter] = useState("W");
 
@@ -148,4 +148,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomePage;

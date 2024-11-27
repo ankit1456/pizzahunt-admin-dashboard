@@ -1,5 +1,5 @@
+import { useCategory } from "@hooks/categories";
 import { Form, Radio, Switch } from "antd";
-import useCategory from "../../hooks/categories/useCategory";
 
 type Props = {
   selectedCategoryId: string;

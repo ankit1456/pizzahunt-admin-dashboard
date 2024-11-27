@@ -1,7 +1,7 @@
+import { getCategory } from "@http/services/category.service";
 import { useQuery } from "@tanstack/react-query";
-import { getCategory } from "../../http/services/category.service";
 
-function useCategory(categoryId: string) {
+export function useCategory(categoryId: string) {
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ["category", categoryId],
     queryFn: () => getCategory(categoryId),
@@ -14,5 +14,3 @@ function useCategory(categoryId: string) {
     isError,
   };
 }
-
-export default useCategory;

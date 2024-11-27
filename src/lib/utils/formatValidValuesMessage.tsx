@@ -1,4 +1,4 @@
-export function formatValidValuesMessage(validValues: string[]) {
+export default function formatValidValuesMessage(validValues: string[]) {
   if (validValues.length === 1) return validValues[0];
   if (validValues.length === 2) return validValues.join(" or ");
 

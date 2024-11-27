@@ -1,9 +1,9 @@
+import { getCategories } from "@http/services/category.service";
+import { TQueryParams } from "@lib/types";
+import { getQueryString } from "@lib/utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { TQueryParams } from "../../lib/types";
-import { getQueryString } from "../../lib/utils";
-import { getCategories } from "../../http/services/category.service";
 
-function useCategories(queryParams?: TQueryParams) {
+export function useCategories(queryParams?: TQueryParams) {
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ["categories", queryParams],
     queryFn: () => {
@@ -20,5 +20,3 @@ function useCategories(queryParams?: TQueryParams) {
     isError,
   };
 }
-
-export default useCategories;

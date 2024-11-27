@@ -1,7 +1,7 @@
+import { Roles } from "@lib/types/user.types";
+import { useAuth } from "@src/state/store";
 import { PropsWithChildren } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../store";
-import { Roles } from "../../lib/types/user.types";
 
 function AdminProtected({ children }: Readonly<PropsWithChildren>) {
   const { user } = useAuth();

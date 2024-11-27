@@ -27,8 +27,8 @@
       "@components/*": ["src/components/*"],
       "@hooks/*": ["src/hooks/*"],
       "@http/*": ["src/http/*"],
-      "@lib/*": ["src/pages/*"],
-      "@pages/*": ["src/pages/*"],
+      "@lib/*": ["src/lib/*"],
+      "@pages": ["src/pages"],
       "@src/*": ["src/*"]
     }
   },

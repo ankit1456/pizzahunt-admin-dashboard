@@ -1,11 +1,11 @@
 import { BellFilled } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, Flex, Layout } from "antd";
 import { IoIosArrowDown } from "react-icons/io";
-import { useLogout } from "../../hooks";
-import { useAuth } from "../../store";
-import { Roles } from "../../common/types/user.types";
-import Pill from "../pill/Pill";
 import "./header.css";
+import { useLogout } from "@hooks/auth";
+import { Roles } from "@lib/types/user.types";
+import { useAuth } from "@src/state/store";
+import { Pill } from "@components/common/ui";
 
 type Props = {
   readonly collapsed: boolean;

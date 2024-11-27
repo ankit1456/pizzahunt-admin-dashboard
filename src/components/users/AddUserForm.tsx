@@ -1,9 +1,9 @@
+import SelectRestaurant from "@components/common/SelectRestaurant";
+import { FormItem } from "@components/common/ui";
+import { Roles } from "@lib/types/user.types";
+import { useAuth } from "@src/state/store";
 import { Card, Col, Flex, Form, Row, Select } from "antd";
 import { FocusEvent } from "react";
-import SelectRestaurant from "../common/SelectRestaurant";
-import { useAuth } from "../../store";
-import { Roles } from "../../lib/types/user.types";
-import { FormItem } from "../../ui";
 
 type Props = {
   isEditMode: boolean;

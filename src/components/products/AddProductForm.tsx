@@ -1,3 +1,9 @@
+import SelectRestaurant from "@components/common/SelectRestaurant";
+import { FormItem } from "@components/common/ui";
+import AttributesForm from "@components/products/AttributesForm";
+import ImageUpload from "@components/products/ImageUpload";
+import PriceConfigurationForm from "@components/products/PriceConfigurationForm";
+import { useCategories } from "@hooks/categories";
 import {
   Card,
   Col,
@@ -10,12 +16,6 @@ import {
   Typography,
 } from "antd";
 import { FocusEvent, useState } from "react";
-import useCategories from "../../hooks/categories/useCategories";
-import { FormItem } from "../../ui";
-import ImageUpload from "../../features/products/ImageUpload";
-import SelectRestaurant from "../common/SelectRestaurant";
-import PriceConfigurationForm from "../../features/products/PriceConfigurationForm";
-import AttributesForm from "../../features/products/AttributesForm";
 
 function AddProductForm() {
   // const { user } = useAuth();

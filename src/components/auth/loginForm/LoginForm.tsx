@@ -1,20 +1,16 @@
-import { LockFilled, UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Card, Space, Form, Input, Flex, Checkbox, Button } from "antd";
+import { LockFilled, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { ErrorAlert } from "@components/common/ui";
+import { useLogout, useSelf } from "@hooks/auth";
+import { login } from "@http/services/auth.service";
+import { Roles, TAuthResponse, TCredentials } from "@lib/types/user.types";
+import { isAuthorized } from "@lib/utils";
+import { useAuth } from "@src/state/store";
+import { useMutation } from "@tanstack/react-query";
+import { Button, Card, Checkbox, Flex, Form, Input, Space } from "antd";
+import { AxiosError } from "axios";
 import React, { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ErrorAlert } from "../../../ui";
-import { AxiosError } from "axios";
-import { useMutation } from "@tanstack/react-query";
-import {
-  Roles,
-  TAuthResponse,
-  TCredentials,
-} from "../../../lib/types/user.types";
-import { isAuthorized } from "../../../lib/utils";
-import { useAuth } from "../../../store";
-import { useLogout, useSelf } from "../../../hooks";
 import "./loginForm.css";
-import { login } from "../../../http/services/auth.service";
 
 const validateMessages = {
   required: "Please provide your ${label} ",

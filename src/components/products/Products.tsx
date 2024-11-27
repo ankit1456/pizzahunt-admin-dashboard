@@ -1,27 +1,25 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Flex, Form, Image, message, Space, Typography } from "antd";
-import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { LIMIT_PER_PAGE, TQueryParams } from "../../lib/types";
-import { Breadcrumb, Loader, Pill, Table } from "../../ui";
-import ProductFilters from "./ProductFilters";
-import useProducts from "../../hooks/products/useProducts";
+import { Breadcrumb, Loader, Pill, Table } from "@components/common/ui";
+import ProductFilters from "@components/products/ProductFilters";
+import { useCreateProduct, useEditProduct, useProducts } from "@hooks/products";
+import { LIMIT_PER_PAGE, TQueryParams } from "@lib/types";
 import {
   TProduct,
   TProductFormValues,
   TProductPayload,
-} from "../../lib/types/product.types";
+} from "@lib/types/product.types";
+import { Roles } from "@lib/types/user.types";
+import { formatDate } from "@lib/utils";
+import { useAuth } from "@src/state/store";
+import { Button, Flex, Form, Image, message, Space, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { formatDate } from "../../lib/utils";
-import { MdEdit } from "react-icons/md";
 import { AxiosError } from "axios";
-import { useAuth } from "../../store";
-import { Roles } from "../../lib/types/user.types";
+import { useMemo, useState } from "react";
+import { MdEdit } from "react-icons/md";
+import { useSearchParams } from "react-router-dom";
 import AddProductDrawer from "./AddProductDrawer";
-import useCreateProduct from "../../hooks/products/useCreateProduct";
 import AddProductForm from "./AddProductForm";
 import { generateFormData } from "./helpers";
-import useEditProduct from "../../hooks/products/useEditProduct";
 
 const columns: ColumnsType<TProduct> = [
   {

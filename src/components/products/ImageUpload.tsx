@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Flex, Upload, UploadProps } from "antd";
 import { Dispatch, useEffect, useState } from "react";
-import { formatValidValuesMessage } from "../../lib/utils/formatValidValuesMessage";
+import { formatValidValuesMessage } from "@lib/utils";
 
 type Props = {
   initialImage?: { url: string };

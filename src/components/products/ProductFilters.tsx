@@ -1,4 +1,8 @@
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { useCategories } from "@hooks/categories";
+import { TFilterPayload, TQueryParams } from "@lib/types";
+import { Roles } from "@lib/types/user.types";
+import { debounce } from "@lib/utils";
+import { useAuth } from "@src/state/store";
 import {
   Card,
   Col,
@@ -12,12 +16,7 @@ import {
 } from "antd";
 import { Dispatch, PropsWithChildren, SetStateAction, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import SelectRestaurant from "../common/SelectRestaurant";
-import useCategories from "../../hooks/categories/useCategories";
-import { TFilterPayload, TQueryParams } from "../../lib/types";
-import { debounce } from "../../lib/utils";
-import { useAuth } from "../../store";
-import { Roles } from "../../lib/types/user.types";
+import SelectRestaurant from "@components/common/SelectRestaurant";
 
 type Props = {
   queryParams: TQueryParams;

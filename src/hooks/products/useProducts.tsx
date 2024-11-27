@@ -1,9 +1,9 @@
+import { getProducts } from "@http/services/product.service";
+import { TQueryParams } from "@lib/types";
+import { getQueryString } from "@lib/utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { TQueryParams } from "../../lib/types";
-import { getQueryString } from "../../lib/utils";
-import { getProducts } from "../../http/services/product.service";
 
-function useProducts(queryParams: TQueryParams) {
+export function useProducts(queryParams: TQueryParams) {
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ["products", queryParams],
     queryFn: () => {
@@ -20,5 +20,3 @@ function useProducts(queryParams: TQueryParams) {
     isError,
   };
 }
-
-export default useProducts;

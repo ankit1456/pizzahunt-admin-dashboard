@@ -1,6 +1,6 @@
+import { self } from "@http/services/auth.service";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { self } from "../../http/services/auth.service";
 
 const getSelf = async () => {
   const { data } = await self();

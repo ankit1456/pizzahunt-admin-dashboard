@@ -1,6 +1,6 @@
+import { logout } from "@http/services/auth.service";
+import { useAuth } from "@src/state/store";
 import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "../../store";
-import { logout } from "../../http/services/auth.service";
 
 export default function useLogout() {
   const { logoutFromStore } = useAuth();

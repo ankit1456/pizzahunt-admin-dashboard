@@ -1,6 +1,6 @@
+import { FormItem } from "@components/common/ui";
 import { Card, Col, Form, Row } from "antd";
 import { FocusEvent } from "react";
-import { FormItem } from "../../ui";
 
 function AddRestaurantForm() {
   const form = Form.useFormInstance();

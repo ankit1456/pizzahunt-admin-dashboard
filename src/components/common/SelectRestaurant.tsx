@@ -1,9 +1,9 @@
+import { Loader } from "@components/common/ui";
+import { useInfiniteRestaurants } from "@hooks/restaurants";
+import { LIMIT_PER_SCROLL, TQueryParams } from "@lib/types";
+import { debounce } from "@lib/utils";
 import { Flex, Select } from "antd";
 import { UIEvent, useState } from "react";
-import { useInfiniteRestaurants } from "../../hooks";
-import { LIMIT_PER_SCROLL, TQueryParams } from "../../lib/types";
-import { Loader } from "../../ui";
-import { debounce } from "../../lib/utils";
 
 type Props = {
   placeholder?: string;

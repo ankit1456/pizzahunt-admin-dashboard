@@ -1,9 +1,19 @@
+import { AdminProtected } from "@components/auth";
+import {
+  Dashboard,
+  RootLayout,
+  UnAuthenticatedLayout,
+} from "@components/layouts";
+import {
+  HomePage,
+  LoginPage,
+  PageNotFound,
+  ProductsPage,
+  RestaurantsPage,
+  UsersPage,
+} from "@pages";
 import { createBrowserRouter } from "react-router-dom";
-import { AdminProtected } from "./features/authentication";
-import { Dashboard, RootLayout, UnAuthenticatedLayout } from "./layouts";
-import { HomePage, LoginPage, Restaurants, Users } from "./pages";
-import Products from "./components/products/Products";
-import { useAuth } from "@src/state/store";
+
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -20,17 +30,17 @@ export const router = createBrowserRouter([
             path: "users",
             element: (
               <AdminProtected>
-                <Users />
+                <UsersPage />
               </AdminProtected>
             ),
           },
           {
             path: "restaurants",
-            element: <Restaurants />,
+            element: <RestaurantsPage />,
           },
           {
             path: "products",
-            element: <Products />,
+            element: <ProductsPage />,
           },
           {
             path: "promos",

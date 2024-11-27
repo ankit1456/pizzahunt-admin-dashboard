@@ -1,17 +1,17 @@
 import { PlusOutlined } from "@ant-design/icons";
+import { Breadcrumb, Loader, Table } from "@components/common/ui";
+import { AddUserDrawer, AddUserForm, UserFilters } from "@components/users";
+import { useCreateUser, useEditUser, useUsers } from "@hooks/users";
+import { LIMIT_PER_PAGE, TQueryParams } from "@lib/types";
+import { TTenant } from "@lib/types/tenant.types";
+import { Roles, TUser, TUserPayload } from "@lib/types/user.types";
+import { formatDate } from "@lib/utils";
 import { Button, Flex, Form, message, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { AxiosError } from "axios";
 import { useMemo, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
-import { AddUserDrawer, AddUserForm, UserFilters } from "../../features/users";
-import { useCreateUser, useEditUser, useUsers } from "../../hooks";
-import { LIMIT_PER_PAGE, TQueryParams } from "../../lib/types";
-import { TTenant } from "../../lib/types/tenant.types";
-import { Roles, TUser, TUserPayload } from "../../lib/types/user.types";
-import { Breadcrumb, Loader, Table } from "../../ui";
-import { formatDate } from "../../lib/utils";
 
 const columns: ColumnsType<TUser> = [
   {
@@ -60,7 +60,7 @@ const columns: ColumnsType<TUser> = [
   },
 ];
 
-function Users() {
+function UsersPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -199,4 +199,4 @@ function Users() {
   );
 }
 
-export default Users;
+export default UsersPage;

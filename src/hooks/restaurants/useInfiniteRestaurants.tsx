@@ -1,9 +1,9 @@
+import { getRestaurants } from "@http/services/tenant.service";
+import { TQueryParams } from "@lib/types";
+import { getQueryString } from "@lib/utils";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { TQueryParams } from "../../lib/types";
-import { getQueryString } from "../../lib/utils";
-import { getRestaurants } from "../../http/services/tenant.service";
 
-function useInfiniteRestaurants(queryParams: TQueryParams) {
+export function useInfiniteRestaurants(queryParams: TQueryParams) {
   const {
     data,
     isFetching,
@@ -39,5 +39,3 @@ function useInfiniteRestaurants(queryParams: TQueryParams) {
     isFetchingNextPage,
   };
 }
-
-export default useInfiniteRestaurants;
