@@ -48,6 +48,11 @@ function Header({ collapsed }: Props) {
             menu={{
               items: [
                 {
+                  key: "username",
+                  label: `${user?.firstName} ${user?.lastName}`,
+                  style: { textTransform: "capitalize" },
+                },
+                {
                   key: "logout",
                   label: "logout",
                   onClick: () => logoutMutate(),

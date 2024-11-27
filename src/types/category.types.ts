@@ -1,3 +1,5 @@
+import { EResponseStatus } from ".";
+
 type TPriceConfiguration = Map<
   string,
   {
@@ -8,7 +10,7 @@ type TPriceConfiguration = Map<
 
 type TAttribute = {
   attributeName: string;
-  widgetType: string;
+  widgetType: "radio" | "switch";
   defaultValue: string;
   availableOptions: Array<string>;
 };
@@ -20,4 +22,9 @@ export type TCategory = {
   attributes: TAttribute[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type TCategoryResponse = {
+  category: TCategory;
+  status: EResponseStatus;
 };

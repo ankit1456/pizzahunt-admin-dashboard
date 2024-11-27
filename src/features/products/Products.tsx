@@ -6,11 +6,22 @@ import { LIMIT_PER_PAGE, TQueryParams } from "../../types";
 import { Breadcrumb, Loader, Pill, Table } from "../../ui";
 import ProductFilters from "./ProductFilters";
 import useProducts from "../../hooks/products/useProducts";
-import { TProduct } from "../../types/product.types";
+import {
+  TProduct,
+  TProductFormValues,
+  TProductPayload,
+} from "../../types/product.types";
 import { ColumnsType } from "antd/lib/table";
 import { formatDate } from "../../utils";
 import { MdEdit } from "react-icons/md";
 import { AxiosError } from "axios";
+import { useAuth } from "../../store";
+import { Roles } from "../../types/user.types";
+import AddProductDrawer from "./AddProductDrawer";
+import useCreateProduct from "../../hooks/products/useCreateProduct";
+import AddProductForm from "./AddProductForm";
+import { generateFormData } from "./helpers";
+import useEditProduct from "../../hooks/products/useEditProduct";
 
 const columns: ColumnsType<TProduct> = [
   {
@@ -57,7 +68,7 @@ const columns: ColumnsType<TProduct> = [
     render: (isPublished: boolean) => {
       return (
         <Pill
-          style={{ textTransform: "capitalize" }}
+          style={{ textTransform: "capitalize", borderRadius: "8px" }}
           type={isPublished ? "success" : "draft"}
         >
           {isPublished ? "published" : "draft"}
@@ -76,21 +87,55 @@ const columns: ColumnsType<TProduct> = [
 ];
 
 function Products() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<TProduct | null>(null);
+
   const [messageApi, contextHolder] = message.useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm();
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { user } = useAuth();
 
   const [queryParams, setQueryParams] = useState<TQueryParams>({
     page: Number(searchParams.get("page")) || 1,
     limit: LIMIT_PER_PAGE,
     isPublished: !!searchParams.get("published"),
     categoryId: searchParams.get("category") ?? "",
-    tenantId: searchParams.get("restaurant") ?? "",
+    tenantId:
+      user?.role === Roles.MANAGER
+        ? user.tenant?.id
+        : searchParams.get("restaurant") ?? "",
   });
 
   const { data, isFetching, isError, error } = useProducts(queryParams);
+
+  const { newProductMutate, isPending } = useCreateProduct(
+    handleFormSuccess,
+    messageApi
+  );
+  const { editProductMutate, isPending: isEditing } = useEditProduct(
+    productToEdit,
+    handleFormSuccess,
+    messageApi
+  );
+
+  const isEditMode = !!productToEdit;
+
+  const handleEditProduct = (product: TProduct) => {
+    setProductToEdit(product);
+    form.setFieldsValue({
+      ...product,
+      attributes: product.attributes.reduce((acc, cur) => {
+        return { ...acc, [cur.attributeName]: cur.value };
+      }, {}),
+    });
+    setIsDrawerOpen(true);
+  };
+
+  function handleFormSuccess() {
+    form.resetFields();
+    handleCloseDrawer();
+  }
 
   const errorMessage = useMemo(() => {
     if (error instanceof AxiosError)
@@ -111,6 +156,33 @@ function Products() {
     }));
   };
 
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setProductToEdit(null);
+  };
+
+  function handleSubmit(formValues: TProductFormValues) {
+    const formAttributes = formValues.attributes;
+
+    const attributes = Object.entries(formAttributes).map(
+      ([attributeName, value]) => ({
+        attributeName,
+        value,
+      })
+    );
+
+    const data: TProductPayload = {
+      ...formValues,
+      attributes,
+      image: formValues.image.file,
+    };
+
+    const productPayload = generateFormData(data);
+
+    if (isEditMode) editProductMutate(productPayload);
+    else newProductMutate(productPayload);
+  }
+
   return (
     <Flex vertical gap={12}>
       {contextHolder}
@@ -126,7 +198,6 @@ function Products() {
           )}
         </div>
       </Flex>
-
       <ProductFilters queryParams={queryParams} setQueryParams={setQueryParams}>
         <Button
           type="primary"
@@ -136,15 +207,14 @@ function Products() {
           Add Product
         </Button>
       </ProductFilters>
-
       <Table<TProduct>
         columns={[
           ...columns,
           {
             title: "Actions",
-            render: (_: string) => {
+            render: (_: string, product: TProduct) => {
               return (
-                <Button type="link" onClick={() => {}}>
+                <Button type="link" onClick={() => handleEditProduct(product)}>
                   <MdEdit size={18} />
                 </Button>
               );
@@ -156,6 +226,25 @@ function Products() {
         onPageChange={handlePageChange}
         rowKey="_id"
       />
+      <AddProductDrawer
+        form={form}
+        isLoading={isPending || isEditing}
+        isDrawerOpen={isDrawerOpen}
+        onCloseDrawer={handleCloseDrawer}
+        isEditMode={isEditMode}
+      >
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          initialValues={{
+            isPublished: isEditMode ? productToEdit.isPublished : false,
+          }}
+        >
+          <AddProductForm />
+          <button type="submit" style={{ display: "none" }} />
+        </Form>
+      </AddProductDrawer>
     </Flex>
   );
 }

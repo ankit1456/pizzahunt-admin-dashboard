@@ -33,3 +33,5 @@ export default {
 <!-- show a left border in sidebar items when hover or active -->
 <!-- add is sidebar open state to localstorage -->
 <!-- check column width and align option for all the tables -->
+<!-- add loader to table  -->
+<!-- fix isPublished in products filter, when unchecked it should show only draft products -->

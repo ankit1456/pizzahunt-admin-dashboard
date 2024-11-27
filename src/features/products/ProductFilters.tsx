@@ -16,6 +16,8 @@ import SelectRestaurant from "../../common/components/SelectRestaurant";
 import useCategories from "../../hooks/categories/useCategories";
 import { TFilterPayload, TQueryParams } from "../../types";
 import { debounce } from "../../utils";
+import { useAuth } from "../../store";
+import { Roles } from "../../types/user.types";
 
 type Props = {
   queryParams: TQueryParams;
@@ -28,6 +30,7 @@ function ProductFilters({
 }: Readonly<PropsWithChildren<Props>>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm();
+  const { user } = useAuth();
 
   const { data: categories } = useCategories();
 
@@ -71,6 +74,8 @@ function ProductFilters({
     setSearchParams(searchParams);
   };
 
+  const isPublished = Form.useWatch<boolean>("isPublished", form);
+
   return (
     <Form
       form={form}
@@ -108,33 +113,21 @@ function ProductFilters({
                 </Form.Item>
               </Col>
 
-              <Col span={7}>
-                <Form.Item name="tenantId">
-                  {/* <Select
-                    allowClear
-                    className="width-full"
-                    placeholder="Restaurant"
-                  >
-                    <Select.Option value="SADFD">bengaluru</Select.Option>
-                    <Select.Option value="mumisd">mumbai</Select.Option>
-                  </Select> */}
-
-                  <SelectRestaurant placeholder="restaurant" />
-                </Form.Item>
-              </Col>
+              {user?.role === Roles.ADMIN && (
+                <Col span={7}>
+                  <Form.Item name="tenantId">
+                    <SelectRestaurant placeholder="restaurant" />
+                  </Form.Item>
+                </Col>
+              )}
 
               <Col>
                 <Space>
                   <Form.Item name="isPublished">
-                    <Switch
-                      checkedChildren={<CheckOutlined />}
-                      unCheckedChildren={<CloseOutlined />}
-                    />
+                    <Switch checkedChildren="Yes" unCheckedChildren="No" />
                   </Form.Item>
                   <Typography.Text style={{ fontSize: "13px" }}>
-                    {form.getFieldValue("isPublished")
-                      ? "published"
-                      : "non published"}
+                    {isPublished ? "published" : "draft"}
                   </Typography.Text>
                 </Space>
               </Col>
