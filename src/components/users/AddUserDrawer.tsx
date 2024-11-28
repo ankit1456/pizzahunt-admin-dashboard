@@ -6,12 +6,14 @@ type Props = {
   isDrawerOpen: boolean;
   isEditMode: boolean;
   onCloseDrawer: () => void;
+  isSubmitting: boolean;
 };
 function AddUserDrawer({
   form,
   isDrawerOpen,
   isEditMode,
   onCloseDrawer,
+  isSubmitting = false,
   children,
 }: PropsWithChildren<Props>) {
   const {
@@ -39,7 +41,11 @@ function AddUserDrawer({
             Cancel
           </Button>
 
-          <Button onClick={() => form.submit()} type="primary">
+          <Button
+            onClick={() => form.submit()}
+            type="primary"
+            loading={isSubmitting}
+          >
             Submit
           </Button>
         </Space>

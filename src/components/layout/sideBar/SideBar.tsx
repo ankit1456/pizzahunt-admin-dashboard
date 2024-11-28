@@ -8,7 +8,7 @@ import { IoIosRestaurant } from "react-icons/io";
 import { IoFastFood } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import "./sider.css";
+import "./sideBar.css";
 
 const getMenuItems = (role: string) => {
   const baseItems = [
@@ -56,7 +56,7 @@ type Props = Readonly<{
   setCollapsed: Dispatch<SetStateAction<boolean>>;
 }>;
 
-function Sider({ collapsed, setCollapsed }: Props) {
+function SideBar({ collapsed, setCollapsed }: Props) {
   const { user } = useAuth();
 
   const sideItems = getMenuItems(user?.role as string);
@@ -68,7 +68,7 @@ function Sider({ collapsed, setCollapsed }: Props) {
       collapsible
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
-      className="sider"
+      className="sidebar"
     >
       <div
         style={{
@@ -89,4 +89,4 @@ function Sider({ collapsed, setCollapsed }: Props) {
   );
 }
 
-export default Sider;
+export default SideBar;

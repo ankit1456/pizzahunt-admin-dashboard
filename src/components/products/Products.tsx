@@ -1,5 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Breadcrumb, Loader, Pill, Table } from "@components/common/ui";
+import AddProductDrawer from "@components/products/AddProductDrawer";
+import AddProductForm from "@components/products/AddProductForm";
 import ProductFilters from "@components/products/ProductFilters";
 import { useCreateProduct, useEditProduct, useProducts } from "@hooks/products";
 import { LIMIT_PER_PAGE, TQueryParams } from "@lib/types";
@@ -9,7 +11,7 @@ import {
   TProductPayload,
 } from "@lib/types/product.types";
 import { Roles } from "@lib/types/user.types";
-import { formatDate } from "@lib/utils";
+import { formatDate, generateFormData } from "@lib/utils";
 import { useAuth } from "@src/state/store";
 import { Button, Flex, Form, Image, message, Space, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
@@ -17,52 +19,43 @@ import { AxiosError } from "axios";
 import { useMemo, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
-import AddProductDrawer from "./AddProductDrawer";
-import AddProductForm from "./AddProductForm";
-import { generateFormData } from "./helpers";
 
 const columns: ColumnsType<TProduct> = [
   {
     title: "Product name",
     dataIndex: "productName",
     key: "productName",
-
-    render: (productName: string, product: TProduct) => (
+    render: (productName: string, product) => (
       <Space>
         <Image
           loading="lazy"
-          height={50}
+          height={60}
           width={60}
           style={{ objectFit: "contain" }}
           src={product.image.url}
         />
 
-        <span style={{ color: "var(--primary-color)" }}>{productName}</span>
+        <span
+          style={{ color: "var(--primary-color)", textTransform: "capitalize" }}
+        >
+          {productName}
+        </span>
       </Space>
     ),
-    // width: 190,
-  },
-
-  {
-    title: "Description",
-    dataIndex: "description",
-    key: "description",
   },
   {
     title: "Category",
     dataIndex: "category",
     key: "category",
-    align: "center",
+    width: 200,
     render: (category) => <span>{category.categoryName}</span>,
-    width: 100,
   },
 
   {
     title: "Status",
     dataIndex: "isPublished",
     key: "isPublished",
-    align: "center",
-
+    width: 200,
     render: (isPublished: boolean) => {
       return (
         <Pill
@@ -79,19 +72,17 @@ const columns: ColumnsType<TProduct> = [
     title: "Created At",
     dataIndex: "createdAt",
     key: "createdAt ",
+    width: 200,
     render: (createdAt: string) => formatDate(createdAt),
-    width: 120,
   },
 ];
 
 function Products() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [productToEdit, setProductToEdit] = useState<TProduct | null>(null);
-
   const [messageApi, contextHolder] = message.useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [form] = Form.useForm();
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<TProduct | null>(null);
   const { user } = useAuth();
 
   const [queryParams, setQueryParams] = useState<TQueryParams>({
@@ -105,8 +96,9 @@ function Products() {
         : searchParams.get("restaurant") ?? "",
   });
 
-  const { data, isFetching, isError, error } = useProducts(queryParams);
+  const [form] = Form.useForm<TProductFormValues>();
 
+  const { data, isFetching, isError, error } = useProducts(queryParams);
   const { newProductMutate, isPending } = useCreateProduct(
     handleFormSuccess,
     messageApi
@@ -121,6 +113,7 @@ function Products() {
 
   const handleEditProduct = (product: TProduct) => {
     setProductToEdit(product);
+
     form.setFieldsValue({
       ...product,
       attributes: product.attributes.reduce((acc, cur) => {
@@ -130,19 +123,16 @@ function Products() {
     setIsDrawerOpen(true);
   };
 
+  const handleCloseDrawer = () => {
+    console.log(form.isFieldsTouched());
+    setIsDrawerOpen(false);
+    setProductToEdit(null);
+  };
+
   function handleFormSuccess() {
     form.resetFields();
     handleCloseDrawer();
   }
-
-  const errorMessage = useMemo(() => {
-    if (error instanceof AxiosError)
-      return error.response?.data.message ?? error.code === "ERR_NETWORK"
-        ? "Having trouble reaching the internet. Please try again later"
-        : error.message;
-
-    return "";
-  }, [error]);
 
   const handlePageChange = (page: number) => {
     searchParams.set("page", String(page));
@@ -153,11 +143,14 @@ function Products() {
       page,
     }));
   };
+  const errorMessage = useMemo(() => {
+    if (error instanceof AxiosError)
+      return error.response?.data.message ?? error.code === "ERR_NETWORK"
+        ? "Having trouble reaching the internet. Please try again later"
+        : error.message;
 
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-    setProductToEdit(null);
-  };
+    return "";
+  }, [error]);
 
   function handleSubmit(formValues: TProductFormValues) {
     const formAttributes = formValues.attributes;
@@ -175,58 +168,65 @@ function Products() {
       image: formValues.image.file,
     };
 
-    const productPayload = generateFormData(data);
+    const productPayload = generateFormData<TProductPayload>(data);
 
     if (isEditMode) editProductMutate(productPayload);
     else newProductMutate(productPayload);
   }
 
   return (
-    <Flex vertical gap={12}>
-      {contextHolder}
-      <Flex justify="space-between" align="center">
-        <Breadcrumb items={[{ label: "Products", to: "/products" }]} />
+    <>
+      <Flex vertical gap={12}>
+        {contextHolder}
+        <Flex justify="space-between" align="center">
+          <Breadcrumb items={[{ label: "Products", to: "/products" }]} />
 
-        <div style={{ marginRight: "10px" }}>
-          {isFetching && <Loader size={22} />}
-          {isError && !isFetching && (
-            <Typography.Text className="font-12" type="danger">
-              {errorMessage}
-            </Typography.Text>
-          )}
-        </div>
-      </Flex>
-      <ProductFilters queryParams={queryParams} setQueryParams={setQueryParams}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setIsDrawerOpen(true)}
-        >
-          Add Product
-        </Button>
-      </ProductFilters>
-      <Table<TProduct>
-        columns={[
-          ...columns,
-          {
-            title: "Actions",
-            render: (_: string, product: TProduct) => {
-              return (
-                <Button type="link" onClick={() => handleEditProduct(product)}>
-                  <MdEdit size={18} />
-                </Button>
-              );
+          <div style={{ marginRight: "10px" }}>
+            {isFetching && <Loader size={22} />}
+            {isError && !isFetching && (
+              <Typography.Text className="font-12" type="danger">
+                {errorMessage}
+              </Typography.Text>
+            )}
+          </div>
+        </Flex>
+
+        <ProductFilters setQueryParams={setQueryParams}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            Add Product
+          </Button>
+        </ProductFilters>
+
+        <Table<TProduct>
+          columns={[
+            ...columns,
+            {
+              title: "Actions",
+              render: (_: string, product: TProduct) => {
+                return (
+                  <Button
+                    type="link"
+                    onClick={() => handleEditProduct(product)}
+                  >
+                    <MdEdit size={18} />
+                  </Button>
+                );
+              },
+              width: 200,
             },
-            width: 120,
-          },
-        ]}
-        data={data}
-        onPageChange={handlePageChange}
-        rowKey="_id"
-      />
+          ]}
+          data={data}
+          onPageChange={handlePageChange}
+          rowKey="_id"
+        />
+      </Flex>
       <AddProductDrawer
         form={form}
-        isLoading={isPending || isEditing}
+        isSubmitting={isPending || isEditing}
         isDrawerOpen={isDrawerOpen}
         onCloseDrawer={handleCloseDrawer}
         isEditMode={isEditMode}
@@ -243,7 +243,7 @@ function Products() {
           <button type="submit" style={{ display: "none" }} />
         </Form>
       </AddProductDrawer>
-    </Flex>
+    </>
   );
 }
 

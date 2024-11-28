@@ -3,7 +3,7 @@ import {
   Dashboard,
   RootLayout,
   UnAuthenticatedLayout,
-} from "@components/layouts";
+} from "@components/layout";
 import {
   HomePage,
   LoginPage,

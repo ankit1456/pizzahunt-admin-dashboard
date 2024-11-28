@@ -35,3 +35,4 @@ export default {
 <!-- check column width and align option for all the tables -->
 <!-- add loader to table  -->
 <!-- fix isPublished in products filter, when unchecked it should show only draft products -->
+<!-- add loading states wherever required -->

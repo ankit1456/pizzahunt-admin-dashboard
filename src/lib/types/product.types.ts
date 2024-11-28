@@ -37,5 +37,7 @@ export type TProductFormValues = Omit<
   attributes: Record<string, string | boolean>;
   image: {
     file: File;
+    imageId?: string;
+    url?: string;
   };
 };

@@ -19,7 +19,6 @@ import { useSearchParams } from "react-router-dom";
 import SelectRestaurant from "@components/common/SelectRestaurant";
 
 type Props = {
-  queryParams: TQueryParams;
   setQueryParams: Dispatch<SetStateAction<TQueryParams>>;
 };
 
@@ -73,8 +72,6 @@ function ProductFilters({
     setSearchParams(searchParams);
   };
 
-  const isPublished = Form.useWatch<boolean>("isPublished", form);
-
   return (
     <Form
       form={form}
@@ -87,9 +84,9 @@ function ProductFilters({
       onFieldsChange={handleFilterChange}
     >
       <Card className="user-filters">
-        <Row justify="space-between" align="middle">
+        <Row justify="space-between">
           <Col span={20}>
-            <Row gutter={20} align="middle">
+            <Row gutter={20}>
               <Col span={6}>
                 <Form.Item name="q">
                   <Input.Search allowClear placeholder="search products" />
@@ -122,11 +119,11 @@ function ProductFilters({
 
               <Col>
                 <Space>
-                  <Form.Item name="isPublished">
+                  <Form.Item name="isPublished" valuePropName="checked">
                     <Switch checkedChildren="Yes" unCheckedChildren="No" />
                   </Form.Item>
                   <Typography.Text style={{ fontSize: "13px" }}>
-                    {isPublished ? "published" : "draft"}
+                    show only published
                   </Typography.Text>
                 </Space>
               </Col>

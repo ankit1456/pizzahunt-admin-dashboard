@@ -8,7 +8,7 @@ export function useCreateUser(
 ) {
   const queryClient = useQueryClient();
 
-  const { mutate: newUserMutate } = useMutation({
+  const { mutate: newUserMutate, isPending: isCreatingUser } = useMutation({
     mutationKey: ["create-user"],
     mutationFn: createUser,
     onSuccess: () => {
@@ -25,5 +25,5 @@ export function useCreateUser(
     },
   });
 
-  return { newUserMutate };
+  return { newUserMutate, isCreatingUser };
 }

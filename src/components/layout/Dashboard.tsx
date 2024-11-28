@@ -1,19 +1,21 @@
-import { HeartFilled } from "@ant-design/icons";
+import Footer from "@components/layout/Footer";
+import Header from "@components/layout/header/Header";
+import SideBar from "@components/layout/sideBar/SideBar";
+import { useLocalStorage } from "@hooks/common";
+import { useAuth } from "@src/state/store";
 import { Layout } from "antd";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Navigate,
   Outlet,
   useLocation,
   useSearchParams,
 } from "react-router-dom";
-import { useAuth } from "@src/state/store";
-import { Header, Sider } from "@components/common/ui";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useLocalStorage(false, "sidebar-collapsed");
   const [searchParams, setSearchParams] = useSearchParams();
 
   const redirectPath = useMemo(() => {
@@ -29,17 +31,14 @@ const Dashboard = () => {
   if (redirectPath) return <Navigate to={redirectPath} replace />;
 
   return (
-    <Layout style={{ height: "100dvh", overflow: "hidden" }}>
-      <Sider collapsed={collapsed} setCollapsed={setCollapsed} />
+    <Layout style={{ height: "100dvh" }}>
+      <SideBar collapsed={collapsed} setCollapsed={setCollapsed} />
       <Layout>
         <Header collapsed={collapsed} />
-        <Layout.Content style={{ padding: "1rem", paddingBottom: 0 }}>
+        <Layout.Content style={{ padding: "1rem" }}>
           <Outlet />
         </Layout.Content>
-        <Layout.Footer style={{ textAlign: "center", paddingBlock: "15px" }}>
-          Pizzahunt ©{new Date().getFullYear()} Made with{" "}
-          <HeartFilled style={{ color: "red" }} />
-        </Layout.Footer>
+        <Footer />
       </Layout>
     </Layout>
   );

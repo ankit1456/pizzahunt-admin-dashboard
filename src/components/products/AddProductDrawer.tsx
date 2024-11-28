@@ -6,7 +6,7 @@ type Props = {
   isDrawerOpen: boolean;
   isEditMode: boolean;
   onCloseDrawer: () => void;
-  isLoading: boolean;
+  isSubmitting: boolean;
 };
 function AddProductDrawer({
   form,
@@ -14,7 +14,7 @@ function AddProductDrawer({
   isEditMode,
   onCloseDrawer,
   children,
-  isLoading,
+  isSubmitting = false,
 }: PropsWithChildren<Props>) {
   const {
     token: { colorBgLayout },
@@ -44,7 +44,7 @@ function AddProductDrawer({
           <Button
             onClick={() => form.submit()}
             type="primary"
-            loading={isLoading}
+            loading={isSubmitting}
           >
             Submit
           </Button>

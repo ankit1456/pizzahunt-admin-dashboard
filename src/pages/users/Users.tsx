@@ -1,12 +1,12 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Breadcrumb, Loader, Table } from "@components/common/ui";
+import { Breadcrumb, ErrorBanner, Loader, Table } from "@components/common/ui";
 import { AddUserDrawer, AddUserForm, UserFilters } from "@components/users";
 import { useCreateUser, useEditUser, useUsers } from "@hooks/users";
 import { LIMIT_PER_PAGE, TQueryParams } from "@lib/types";
 import { TTenant } from "@lib/types/tenant.types";
 import { Roles, TUser, TUserPayload } from "@lib/types/user.types";
 import { formatDate } from "@lib/utils";
-import { Button, Flex, Form, message, Typography } from "antd";
+import { Button, Flex, Form, message } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { AxiosError } from "axios";
 import { useMemo, useState } from "react";
@@ -18,12 +18,14 @@ const columns: ColumnsType<TUser> = [
     title: "Name",
     dataIndex: "firstName",
     key: "name",
-    render: (firstName: string, user: TUser) => (
-      <span style={{ color: "var(--primary-color)" }}>
+    render: (firstName: string, user) => (
+      <span
+        style={{ color: "var(--primary-color)", textTransform: "capitalize" }}
+      >
         {firstName} {user.lastName}
       </span>
     ),
-    width: 190,
+    width: 230,
   },
 
   {
@@ -35,7 +37,7 @@ const columns: ColumnsType<TUser> = [
     title: "Role",
     dataIndex: "role",
     key: "role",
-    width: 100,
+    width: 120,
   },
 
   {
@@ -76,8 +78,11 @@ function UsersPage() {
   const [form] = Form.useForm<TUserPayload>();
 
   const { data, isFetching, isError, error } = useUsers(queryParams);
-  const { newUserMutate } = useCreateUser(handleFormSuccess, messageApi);
-  const { editUserMutate } = useEditUser(
+  const { newUserMutate, isCreatingUser } = useCreateUser(
+    handleFormSuccess,
+    messageApi
+  );
+  const { editUserMutate, isEditingUser } = useEditUser(
     userToEdit,
     handleFormSuccess,
     messageApi
@@ -128,7 +133,6 @@ function UsersPage() {
   return (
     <Flex vertical gap={12}>
       {contextHolder}
-
       <Flex justify="space-between" align="center">
         <Breadcrumb
           items={[
@@ -141,10 +145,8 @@ function UsersPage() {
 
         <div style={{ marginRight: "10px" }}>
           {isFetching && <Loader size={22} />}
-          {isError && !isFetching && (
-            <Typography.Text className="font-12" type="danger">
-              {errorMessage}
-            </Typography.Text>
+          {!isFetching && (
+            <ErrorBanner isError={isError} errorMessage={errorMessage} />
           )}
         </div>
       </Flex>
@@ -171,7 +173,7 @@ function UsersPage() {
                 </Button>
               );
             },
-            width: 120,
+            width: 150,
           },
         ]}
         data={data}
@@ -184,6 +186,7 @@ function UsersPage() {
         isDrawerOpen={isDrawerOpen}
         onCloseDrawer={handleCloseDrawer}
         isEditMode={isEditMode}
+        isSubmitting={isCreatingUser || isEditingUser}
       >
         <Form<TUserPayload>
           layout="vertical"

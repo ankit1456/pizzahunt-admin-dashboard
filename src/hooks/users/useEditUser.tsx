@@ -10,7 +10,7 @@ export function useEditUser(
 ) {
   const queryClient = useQueryClient();
 
-  const { mutate: editUserMutate } = useMutation({
+  const { mutate: editUserMutate, isPending: isEditingUser } = useMutation({
     mutationFn: (formValues: TUserPayload) =>
       updateUser(userToEdit!.id, formValues),
     onSuccess: () => {
@@ -26,5 +26,5 @@ export function useEditUser(
       });
     },
   });
-  return { editUserMutate };
+  return { editUserMutate, isEditingUser };
 }

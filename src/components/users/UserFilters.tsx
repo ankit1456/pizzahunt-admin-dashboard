@@ -43,13 +43,7 @@ function UserFilters({
   };
 
   return (
-    <Form
-      form={form}
-      initialValues={{
-        role: searchParams.get("role") ?? "",
-      }}
-      onFieldsChange={handleFilterChange}
-    >
+    <Form form={form} onFieldsChange={handleFilterChange}>
       <Card className="user-filters">
         <Row justify="space-between">
           <Col span={16}>
@@ -62,7 +56,6 @@ function UserFilters({
               <Col span={6}>
                 <Form.Item name="role">
                   <Select allowClear className="width-full" placeholder="role">
-                    <Select.Option value="">All Users </Select.Option>
                     <Select.Option value={Roles.ADMIN}>Admin</Select.Option>
                     <Select.Option value={Roles.MANAGER}>Manager</Select.Option>
                     <Select.Option value={Roles.CUSTOMER}>
